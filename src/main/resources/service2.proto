@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ds.service2";
+option java_outer_classname = "Service2Impl";
+
+package service2;
+
+// Interface exported by the server.
+service CustomerService {
+
+  rpc bookRide(stream BookRequest) returns (BookResponse) {}
+
+  rpc cancelRide(CancelRequest) returns (CancelResponse) {}
+
+  rpc getRideInfo(InfoRequest) returns (stream InfoResponse) {}
+
+}
+
+//Define the messages
+message BookRequest {
+  string currentLocation = 1;
+  string destination = 2;
+}
+
+message BookResponse {
+  string confirmMessage = 1;
+}
+
+message CancelRequest {
+  string rideID = 1;
+}
+
+message CancelResponse {
+  string status = 1;
+}
+
+message InfoRequest {
+  string rideID = 1;
+}
+
+message InfoResponse {
+  string startingLocation = 1;
+  string destination = 2;
+}

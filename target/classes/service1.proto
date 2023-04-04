@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ds.service1";
+option java_outer_classname = "Service1Impl";
+
+package service1;
+
+// Interface exported by the server.
+service FleetManagement {
+
+  rpc addVehicle(AddRequest) returns (AddResponse) {}
+
+  rpc removeVehicle(RemoveRequest) returns (RemoveResponse) {}
+
+  rpc getVehicleStatus(StatusRequest) returns (stream StatusResponse) {}
+
+}
+
+//Define the messages
+message AddRequest {
+  string targetCapacity = 1;
+}
+
+message AddResponse {
+  string vehicleID = 1;
+}
+
+message RemoveRequest {
+  string capacity = 1;
+}
+
+message RemoveResponse {
+  string vehicleID = 1;
+}
+
+message StatusRequest {
+  string vehicleID = 1;
+}
+
+message StatusResponse {
+  string currentLocation = 1;
+  string currentSpeed = 2;
+}

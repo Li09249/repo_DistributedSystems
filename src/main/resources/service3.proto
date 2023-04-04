@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ds.service3";
+option java_outer_classname = "Service3Impl";
+
+package service3;
+
+// Interface exported by the server.
+service PaymentSystem {
+
+  rpc processPayment(PaymentRequest) returns (PaymentResponse) {}
+
+  rpc generateInvoice(stream InvoiceRequest) returns (stream InvoiceResponse) {}
+
+  rpc handleRefunds(stream RefundsRequest) returns (stream RefundsResponse) {}
+
+}
+
+//Define the messages
+message PaymentRequest {
+  double payment = 1;
+}
+
+message PaymentResponse {
+  string confirmMessage = 1;
+}
+
+message InvoiceRequest {
+  string customerName = 1;
+  double amount = 2;
+}
+
+message InvoiceResponse {
+  string invoiceID = 1;
+  string confirmMessage = 2;
+}
+
+message RefundsRequest {
+  string customerName = 1;
+  string rideID = 2;
+  double amount = 3;
+}
+
+message RefundsResponse {
+  string refundID = 1;
+  string confirmMessage = 2;
+}
