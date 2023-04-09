@@ -1,6 +1,13 @@
 package ds.service2;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.util.Properties;
+
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
 
 import ds.service2.CustomerServiceGrpc.CustomerServiceImplBase;
 import io.grpc.Server;
@@ -12,7 +19,11 @@ public class Service2 extends CustomerServiceImplBase{
 	public static void main(String[] args) throws InterruptedException, IOException {
 		Service2 csService = new Service2();
 		
-		int port = 50052;
+        Properties prop = csService.getProperties();
+		
+		csService.registerService(prop);
+		
+		int port = Integer.valueOf( prop.getProperty("50052") );
 		
 		Server server = ServerBuilder.forPort(port).addService(csService).build().start();
 		
@@ -21,25 +32,62 @@ public class Service2 extends CustomerServiceImplBase{
 		server.awaitTermination();
 		
 	}
-
-	//@Override  为什么此处不能写Override，哪个正确
-	public void bookRide(BookRequest request, StreamObserver<BookResponse> responseObserver) {
+	
+	private Properties getProperties() {
+		Properties prop = null;
 		
-		//prepare the value to be set back
-		String currentLocation = request.getCurrentLocation();
-		String destination = request.getDestination();
-		
-		String confirmMessage = "Your booking from " + currentLocation + " to " + destination + " has been confirmed.";
-		
-		//preparing the response message
-		BookResponse reply = BookResponse.newBuilder().setConfirmMessage(confirmMessage).build();
-		
-		//send the response message to the client
-		responseObserver.onNext(reply);
-		responseObserver.onCompleted();		
+		try(InputStream input = new FileInputStream("src/main/resources/transportSystem.properties")){
+			
+			prop = new Properties();
+			
+			//load a properties file
+			prop.load(input);
+			
+			//get the property value and print it out
+			System.out.println("Service2 properies ...");
+            System.out.println("\t service_type: " + prop.getProperty("_http._tcp.local."));
+            System.out.println("\t service_name: " +prop.getProperty("Service2_customerService"));
+            System.out.println("\t service_description: " +prop.getProperty("path=index2.html"));
+	        System.out.println("\t service_port: " +prop.getProperty("50052"));
+	        
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		return prop;
 	}
 	
-	/*public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {
+    private void registerService(Properties prop) {
+		
+		try {
+			//create a JmDNS instance
+			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+			
+			String service_type = prop.getProperty("_http._tcp.local.");
+			String service_name = prop.getProperty("Service2_customerService");
+			
+			int service_port = Integer.valueOf( prop.getProperty("50052"));
+			
+			String service_description_properties = prop.getProperty("path=index2.html");
+			
+			//Register a service
+			ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
+			jmdns.registerService(serviceInfo);
+			
+			System.out.printf("registrering service with type %s and name %s \n", service_type, service_name);
+			
+			//wait a bit
+			Thread.sleep(1000);
+			
+		} catch(IOException e) {
+			System.out.println(e.getMessage());
+		} catch(InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {
 		
 		return new StreamObserver<BookRequest> () {
 			
@@ -68,7 +116,7 @@ public class Service2 extends CustomerServiceImplBase{
 				responseObserver.onCompleted();
 			}
 		};
-	}*/
+	}
 
 	@Override
 	public void cancelRide(CancelRequest request, StreamObserver<CancelResponse> responseObserver) {
@@ -83,6 +131,7 @@ public class Service2 extends CustomerServiceImplBase{
 		responseObserver.onNext(reply);
 		responseObserver.onCompleted();
 	}
+
 
 	@Override
 	public void getRideInfo(InfoRequest request, StreamObserver<InfoResponse> responseObserver) {

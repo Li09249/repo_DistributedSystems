@@ -1,6 +1,13 @@
 package ds.service3;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.util.Properties;
+
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
 
 import ds.service3.PaymentSystemGrpc.PaymentSystemImplBase;
 import io.grpc.Server;
@@ -12,13 +19,70 @@ public class Service3 extends PaymentSystemImplBase{
 	public static void main(String[] args) throws InterruptedException, IOException{
 		Service3 psService = new Service3();
 		
-		int port = 50053;
+        Properties prop = psService.getProperties();
+		
+		psService.registerService(prop);
+		
+		int port = Integer.valueOf( prop.getProperty("50053") );
 		
 		Server server = ServerBuilder.forPort(port).addService(psService).build().start();
 		
 		System.out.println("Service-3 started, listening on " + port);
 
 		server.awaitTermination();
+	}
+	
+	private Properties getProperties() {
+		Properties prop = null;
+		
+		try(InputStream input = new FileInputStream("src/main/resources/transportSystem.properties")){
+			
+			prop = new Properties();
+			
+			//load a properties file
+			prop.load(input);
+			
+			//get the property value and print it out
+			System.out.println("Service3 properies ...");
+            System.out.println("\t service_type: " + prop.getProperty("_http._tcp.local."));
+            System.out.println("\t service_name: " +prop.getProperty("Service3_PaymentSystem"));
+            System.out.println("\t service_description: " +prop.getProperty("path=index3.html"));
+	        System.out.println("\t service_port: " +prop.getProperty("50053"));
+	        
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		return prop;
+	}
+	
+    private void registerService(Properties prop) {
+		
+		try {
+			//create a JmDNS instance
+			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+			
+			String service_type = prop.getProperty("_http._tcp.local.");
+			String service_name = prop.getProperty("Service3_PaymentSystem");
+			
+			int service_port = Integer.valueOf( prop.getProperty("50053"));
+			
+			String service_description_properties = prop.getProperty("path=index3.html");
+			
+			//Register a service
+			ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
+			jmdns.registerService(serviceInfo);
+			
+			System.out.printf("registrering service with type %s and name %s \n", service_type, service_name);
+			
+			//wait a bit
+			Thread.sleep(1000);
+			
+		} catch(IOException e) {
+			System.out.println(e.getMessage());
+		} catch(InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -62,7 +126,7 @@ public class Service3 extends PaymentSystemImplBase{
 
 			@Override
 			public void onCompleted() {
-				System.out.println("receiving generateInvoice completed.");
+				System.out.println("Receiving generateInvoice completed.");
 				
 				//completed too
 				responseObserver.onCompleted();
@@ -97,7 +161,7 @@ public class Service3 extends PaymentSystemImplBase{
 			
 			@Override
 			public void onCompleted() {
-				System.out.println("receiving handleRefunds completed.");
+				System.out.println("Receiving handleRefunds completed.");
 				
 				//completed too
 				responseObserver.onCompleted();
