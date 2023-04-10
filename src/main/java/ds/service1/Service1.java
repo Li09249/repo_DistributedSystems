@@ -48,10 +48,10 @@ public class Service1 extends FleetManagementImplBase{
 			
 			//get the property value and print it out
 			System.out.println("Service1 properies ...");
-            System.out.println("\t service_type: " + prop.getProperty("_http._tcp.local."));
-            System.out.println("\t service_name: " +prop.getProperty("Service1_fleetManagement"));
-            System.out.println("\t service_description: " +prop.getProperty("path=index1.html"));
-	        System.out.println("\t service_port: " +prop.getProperty("50051"));
+            System.out.println("\t service_type: " + prop.getProperty("service_type"));
+            System.out.println("\t service_name: " +prop.getProperty("service_name"));
+            System.out.println("\t service_description: " +prop.getProperty("service_description"));
+	        System.out.println("\t service_port: " +prop.getProperty("service_port"));
 	        
 		} catch(IOException ex) {
 			ex.printStackTrace();
@@ -121,7 +121,7 @@ public class Service1 extends FleetManagementImplBase{
 		
 		//prepare the value to be set back
 		String currentLocation = "Hello, vehicle ID is : " + request.getVehicleID() + ". CurrentLocation is : Mayor Square-NCI. ";
-		String currentSpeed = "CurrentSpeed is : 20km/h.";
+		String currentSpeed = "CurrentSpeed is : 40km/h.";
 		
 		//preparing the response message
 		StatusResponse reply = StatusResponse.newBuilder().setCurrentLocation(currentLocation).setCurrentSpeed(currentSpeed).build();

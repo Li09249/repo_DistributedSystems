@@ -45,10 +45,10 @@ public class Service2 extends CustomerServiceImplBase{
 			
 			//get the property value and print it out
 			System.out.println("Service2 properies ...");
-            System.out.println("\t service_type: " + prop.getProperty("_http._tcp.local."));
-            System.out.println("\t service_name: " +prop.getProperty("Service2_customerService"));
-            System.out.println("\t service_description: " +prop.getProperty("path=index2.html"));
-	        System.out.println("\t service_port: " +prop.getProperty("50052"));
+            System.out.println("\t service_type: " + prop.getProperty("service_type"));
+            System.out.println("\t service_name: " +prop.getProperty("service_name"));
+            System.out.println("\t service_description: " +prop.getProperty("service_description"));
+	        System.out.println("\t service_port: " +prop.getProperty("service_port"));
 	        
 		} catch(IOException ex) {
 			ex.printStackTrace();
@@ -84,7 +84,7 @@ public class Service2 extends CustomerServiceImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}    
 	
 	@Override
 	public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {
@@ -116,7 +116,7 @@ public class Service2 extends CustomerServiceImplBase{
 				responseObserver.onCompleted();
 			}
 		};
-	}
+	}  
 
 	@Override
 	public void cancelRide(CancelRequest request, StreamObserver<CancelResponse> responseObserver) {
@@ -131,7 +131,6 @@ public class Service2 extends CustomerServiceImplBase{
 		responseObserver.onNext(reply);
 		responseObserver.onCompleted();
 	}
-
 
 	@Override
 	public void getRideInfo(InfoRequest request, StreamObserver<InfoResponse> responseObserver) {

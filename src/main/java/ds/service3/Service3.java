@@ -44,10 +44,10 @@ public class Service3 extends PaymentSystemImplBase{
 			
 			//get the property value and print it out
 			System.out.println("Service3 properies ...");
-            System.out.println("\t service_type: " + prop.getProperty("_http._tcp.local."));
-            System.out.println("\t service_name: " +prop.getProperty("Service3_PaymentSystem"));
-            System.out.println("\t service_description: " +prop.getProperty("path=index3.html"));
-	        System.out.println("\t service_port: " +prop.getProperty("50053"));
+            System.out.println("\t service_type: " + prop.getProperty("service_type"));
+            System.out.println("\t service_name: " +prop.getProperty("service_name"));
+            System.out.println("\t service_description: " +prop.getProperty("service_description"));
+	        System.out.println("\t service_port: " +prop.getProperty("service_port"));
 	        
 		} catch(IOException ex) {
 			ex.printStackTrace();
