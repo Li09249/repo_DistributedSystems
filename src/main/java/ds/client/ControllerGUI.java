@@ -1,6 +1,7 @@
 package ds.client;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,20 +16,16 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ds.service1.FleetManagementGrpc;
-import ds.service1.FleetManagementGrpc.FleetManagementBlockingStub;
 import ds.service1.FleetManagementGrpc.FleetManagementStub;
-import ds.service1.StatusRequest;
 import ds.service1.StatusResponse;
 import ds.service2.BookRequest;
 import ds.service2.BookResponse;
 import ds.service2.CustomerServiceGrpc;
-import ds.service2.CustomerServiceGrpc.CustomerServiceBlockingStub;
 import ds.service2.CustomerServiceGrpc.CustomerServiceStub;
 import ds.service2.InfoResponse;
 import ds.service3.InvoiceRequest;
 import ds.service3.InvoiceResponse;
 import ds.service3.PaymentSystemGrpc;
-import ds.service3.PaymentSystemGrpc.PaymentSystemBlockingStub;
 import ds.service3.PaymentSystemGrpc.PaymentSystemStub;
 import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
@@ -38,137 +35,202 @@ import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
 	
-	private JTextField entry1_1,entry1_2,entry1_3, reply1_1,reply1_2,reply1_3;
-	private JTextField entry2_1,entry2_2,entry2_3, reply2_1,reply2_2,reply2_3;
-	private JTextField entry3_1,entry3_2,entry3_3, reply3_1,reply3_2,reply3_3;
-	private static FleetManagementBlockingStub blockingStub1;
+	private JTextField entry1, reply1;
+	private JTextField entry2, entry2_1,entry2_2, reply2;
+	private JTextField entry3, entry3_1,entry3_2,entry3_3, reply3;
+	
 	private static FleetManagementStub asyncStub1;
-	private static CustomerServiceBlockingStub blockingStub2;
+
 	private static CustomerServiceStub asyncStub2;
-	private static PaymentSystemBlockingStub blockingStub3;
+	
 	private static PaymentSystemStub asyncStub3;
 	
 	private JPanel getService1JPanel() {
 
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel();		
+		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
+		panel.setLayout(boxlayout);
+		
+		//service 1
+		JPanel panel1 = new JPanel();
+		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
+		panel1.setLayout(boxlayout1);
+		
+		JButton button4 = new JButton("Invoke Service 1");
+		button4.addActionListener(this);
+		Font font = button4.getFont();
+		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
+		panel1.add(Box.createHorizontalGlue());
+		panel1.add(button4);
+		panel.add(panel1);
+		
+		//method 1
+		JPanel panel2 = new JPanel();
+		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
+		panel2.setLayout(boxlayout2);
+		
+		JLabel label2 = new JLabel("tgCapacity");
+		panel2.add(label2);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+		entry1 = new JTextField("",30);
+		panel2.add(entry1);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+		JButton button1 = new JButton("addVehicle");
+		button1.addActionListener(this);
+		button1.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
+		panel2.add(button1);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		//service 1, method 1
-		JLabel label = new JLabel("Service 1: Enter value")	;
-		panel.add(label);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry1_1 = new JTextField("",10);
-		panel.add(entry1_1);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		JButton button = new JButton("Invoke Method 1");
-		button.addActionListener(this);
-		panel.add(button);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		reply1_1 = new JTextField("", 10);
-		reply1_1 .setEditable(false);
-		panel.add(reply1_1);
+		reply1 = new JTextField("", 30);
+		reply1.setEditable(false);
+		panel2.add(reply1);
+		panel.add(panel2);
 		
 		//method 2
-		JLabel label2 = new JLabel("Enter value")	;
-		panel.add(label2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry1_2 = new JTextField("",10);
-		panel.add(entry1_2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel3 = new JPanel();
+		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
+		panel3.setLayout(boxlayout3);
+		
+		JLabel label3 = new JLabel("Capacity");
+		panel3.add(label3);
+		panel3.add(Box.createRigidArea(new Dimension(21, 0)));
+		entry1 = new JTextField("",30);
+		panel3.add(entry1);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("Invoke Method 2");
+		JButton button2 = new JButton("removeVehicle");
 		button2.addActionListener(this);
-		panel.add(button2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
+		panel3.add(button2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply1_2 = new JTextField("", 10);
-		reply1_2 .setEditable(false);
-		panel.add(reply1_2 );
+		reply1 = new JTextField("", 30);
+		reply1.setEditable(false);
+		panel3.add(reply1);
+		panel.add(panel3);
+		
 		
 		//method 3
-		JLabel label3 = new JLabel("Enter value")	;
-		panel.add(label3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry1_3 = new JTextField("",10);
-		panel.add(entry1_3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel4 = new JPanel();
+		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
+		panel4.setLayout(boxlayout4);
+		
+		JLabel label4 = new JLabel("VehicleID");
+		panel4.add(label4);
+		panel4.add(Box.createRigidArea(new Dimension(16, 0)));
+		entry1 = new JTextField("",30);
+		panel4.add(entry1);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button3 = new JButton("Invoke Method 3");
+		JButton button3 = new JButton("getVehicleStatus");
 		button3.addActionListener(this);
-		panel.add(button3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
+		panel4.add(button3);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply1_3 = new JTextField("", 10);
-		reply1_3 .setEditable(false);
-		panel.add(reply1_3 );
-
-		panel.setLayout(boxlayout);
-
+		reply1 = new JTextField("", 30);
+		reply1.setEditable(false);
+		panel4.add(reply1);
+		panel.add(panel4);
+		
 		return panel;
 
 	}
 	
 	private JPanel getService2JPanel() {
+		
+		JPanel panel = new JPanel();		
+		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
+		panel.setLayout(boxlayout);
+		
+		//service 2
+		JPanel panel1 = new JPanel();
+		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
+		panel1.setLayout(boxlayout1);
+		
+		JButton button4 = new JButton("Invoke Service 2");
+		button4.addActionListener(this);
+		Font font = button4.getFont();
+		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
+		panel1.add(Box.createHorizontalGlue());
+		panel1.add(button4);
+		panel.add(panel1);
+		
+		//method 1
+		JPanel panel2 = new JPanel();
+		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
+		panel2.setLayout(boxlayout2);
+		
+		JLabel label2 = new JLabel("crLocation");
+		panel2.add(label2);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+		entry2_1 = new JTextField("",9);
+		panel2.add(entry2_1);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+		JLabel label2_2 = new JLabel("Destination");
+		panel2.add(label2_2);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+		entry2_2 = new JTextField("",9);
+		panel2.add(entry2_2);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JPanel panel = new JPanel();
+		JButton button1 = new JButton("bookRide");
+		button1.addActionListener(this);
+		button1.setPreferredSize(new Dimension(120, button1.getPreferredSize().height));
+		panel2.add(button1);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
-
-		//service 2, method 1
-		JLabel label = new JLabel("Service 2: Enter value")	;
-		panel.add(label);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry2_1 = new JTextField("",10);
-		panel.add(entry2_1);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		JButton button = new JButton("Invoke Method 1");
-		button.addActionListener(this);
-		panel.add(button);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		reply2_1 = new JTextField("", 10);
-		reply2_1 .setEditable(false);
-		panel.add(reply2_1 );
+		reply2 = new JTextField("", 30);
+		reply2.setEditable(false);
+		panel2.add(reply2);		
+		panel.add(panel2);
 		
 		//method 2
-		JLabel label2 = new JLabel("Enter value")	;
-		panel.add(label2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry2_2 = new JTextField("",10);
-		panel.add(entry2_2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel3 = new JPanel();
+		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
+		panel3.setLayout(boxlayout3);
+		
+		JLabel label3 = new JLabel("RideID");
+		panel3.add(label3);
+		panel3.add(Box.createRigidArea(new Dimension(32, 0)));
+		entry2 = new JTextField("",30);
+		panel3.add(entry2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("Invoke Method 2");
+		JButton button2 = new JButton("cancelRide");
 		button2.addActionListener(this);
-		panel.add(button2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
+		panel3.add(button2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply2_2 = new JTextField("", 10);
-		reply2_2 .setEditable(false);
-		panel.add(reply2_2 );
+		reply2 = new JTextField("", 30);
+		reply2.setEditable(false);
+		panel3.add(reply2);
+		panel.add(panel3);
 		
 		//method 3
-		JLabel label3 = new JLabel("Enter value")	;
-		panel.add(label3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry2_3 = new JTextField("",10);
-		panel.add(entry2_3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel4 = new JPanel();
+		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
+		panel4.setLayout(boxlayout4);
+		
+		JLabel label4 = new JLabel("RideID");
+		panel4.add(label4);
+		panel4.add(Box.createRigidArea(new Dimension(32, 0)));
+		entry2 = new JTextField("",30);
+		panel4.add(entry2);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button3 = new JButton("Invoke Method 3");
+		JButton button3 = new JButton("getRideInfo");
 		button3.addActionListener(this);
-		panel.add(button3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
+		panel4.add(button3);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply2_3 = new JTextField("", 10);
-		reply2_3 .setEditable(false);
-		panel.add(reply2_3 );
-
-		panel.setLayout(boxlayout);
+		reply2 = new JTextField("", 30);
+		reply2.setEditable(false);
+		panel4.add(reply2);
+		panel.add(panel4);
 
 		return panel;
 
@@ -176,62 +238,109 @@ public class ControllerGUI implements ActionListener {
 	
 	private JPanel getService3JPanel() {
 
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel();		
+		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
+		panel.setLayout(boxlayout);
+		
+		//service 3
+		JPanel panel1 = new JPanel();
+		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
+		panel1.setLayout(boxlayout1);
+		
+		JButton button4 = new JButton("Invoke Service 3");
+		button4.addActionListener(this);
+		Font font = button4.getFont();
+		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
+		panel1.add(Box.createHorizontalGlue());
+		panel1.add(button4);
+		panel.add(panel1);
 
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+		//method 1
+		JPanel panel2 = new JPanel();
+		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
+		panel2.setLayout(boxlayout2);
+		
+		JLabel label2 = new JLabel("Payment");
+		panel2.add(label2);
+		panel2.add(Box.createRigidArea(new Dimension(18, 0)));
+		entry3 = new JTextField("",30);
+		panel2.add(entry3);
+		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		//service 3, method 1
-		JLabel label = new JLabel("Service 3: Enter value")	;
-		panel.add(label);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry3_1 = new JTextField("",10);
-		panel.add(entry3_1);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JButton button1 = new JButton("processPayment");
+		button1.addActionListener(this);
+		button1.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
+		panel2.add(button1);
+		panel2.add(Box.createRigidArea(new Dimension(9, 0)));
 
-		JButton button = new JButton("Invoke Method 1");
-		button.addActionListener(this);
-		panel.add(button);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		reply3_1 = new JTextField("", 10);
-		reply3_1 .setEditable(false);
-		panel.add(reply3_1 );
+		reply3 = new JTextField("", 30);
+		reply3.setEditable(false);
+		panel2.add(reply3);
+		panel.add(panel2);
 		
 		//method 2
-		JLabel label2 = new JLabel("Enter value")	;
-		panel.add(label2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry3_2 = new JTextField("",10);
-		panel.add(entry3_2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel3 = new JPanel();
+		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
+		panel3.setLayout(boxlayout3);
+		
+		JLabel label3 = new JLabel("custName");
+		panel3.add(label3);
+		panel3.add(Box.createRigidArea(new Dimension(11, 0)));
+		entry3_1 = new JTextField("",12);
+		panel3.add(entry3_1);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+		JLabel label3_2 = new JLabel("Amount");
+		panel3.add(label3_2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+		entry3_2 = new JTextField("",3);
+		panel3.add(entry3_2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("Invoke Method 2");
+		JButton button2 = new JButton("generateInvoice");
 		button2.addActionListener(this);
-		panel.add(button2);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
+		panel3.add(button2);
+		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply3_2 = new JTextField("", 10);
-		reply3_2 .setEditable(false);
-		panel.add(reply3_2 );
+		reply3 = new JTextField("", 30);
+		reply3.setEditable(false);
+		panel3.add(reply3);
+		panel.add(panel3);
 		
 		//method 3
-		JLabel label3 = new JLabel("Enter value")	;
-		panel.add(label3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel panel4 = new JPanel();
+		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
+		panel4.setLayout(boxlayout4);
+		
+		JLabel label4 = new JLabel("custName");
+		panel4.add(label4);
+		panel4.add(Box.createRigidArea(new Dimension(11, 0)));
+		entry3_1 = new JTextField("",10);
+		panel4.add(entry3_1);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+		JLabel label4_2 = new JLabel("RideID");
+		panel4.add(label4_2);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+		entry3_2 = new JTextField("",10);
+		panel4.add(entry3_2);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+		JLabel label4_3 = new JLabel("Amount");
+		panel4.add(label4_3);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 		entry3_3 = new JTextField("",10);
-		panel.add(entry3_3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		panel4.add(entry3_3);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button3 = new JButton("Invoke Method 3");
+		JButton button3 = new JButton("handleRefunds");
 		button3.addActionListener(this);
-		panel.add(button3);
-		panel.add(Box.createRigidArea(new Dimension(10, 0)));
+		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
+		panel4.add(button3);
+		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply3_3 = new JTextField("", 10);
-		reply3_3 .setEditable(false);
-		panel.add(reply3_3 );
-
-		panel.setLayout(boxlayout);
+		reply3 = new JTextField("", 30);
+		reply3.setEditable(false);
+		panel4.add(reply3);
+        panel.add(panel4);
 
 		return panel;
 
@@ -259,13 +368,13 @@ public class ControllerGUI implements ActionListener {
 
 		// Set border for the panel
 		panel.setBorder(new EmptyBorder(new Insets(50, 100, 50, 100)));
-	
+			
 		panel.add( getService1JPanel() );
 		panel.add( getService2JPanel() );
 		panel.add( getService3JPanel() );
 
 		// Set size for the frame
-		frame.setSize(300, 300);
+		frame.setSize(400, 400);
 
 		// Set the window to be visible as the default to be false
 		frame.add(panel);
@@ -279,241 +388,222 @@ public class ControllerGUI implements ActionListener {
 		String label = button.getActionCommand();  
 
 		if (label.equals("Invoke Service 1")) {
-			System.out.println("service 1 to be invoked ...");
+			System.out.println("Service 1 to be invoked ...");
 
 			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
-			FleetManagementGrpc.FleetManagementBlockingStub blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
+			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
+			
+            if (e.getActionCommand().equals("addVehicle")) {
+            	//addVehicle method          1 VS 1
+    			//preparing message to send
+    			ds.service1.AddRequest request = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1.getText()).build();
 
-			//addVehicle method          1 VS 1
-			//preparing message to send
-			ds.service1.AddRequest request1 = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1_1.getText()).build();
-
-			//retrieving reply from service
-			ds.service1.AddResponse response1 = blockingStub1.addVehicle(request1);
-			
-			//displaying the response to the user
-			reply1_1.setText(response1.getVehicleID());
-			
-			//removeVehicle method             1 VS 1
-			//preparing message to send
-			ds.service1.RemoveRequest request2 = ds.service1.RemoveRequest.newBuilder().setCapacity(entry1_2.getText()).build();
-			
-			//retrieving reply from service			
-			ds.service1.RemoveResponse response2 = blockingStub1.removeVehicle(request2);
-			
-			//displaying the response to the user
-			reply1_2.setText(response2.getVehicleID());
-						
-			//getVehicleStatus method             1 VS 2
-			ds.service1.StatusRequest request3 = ds.service1.StatusRequest.newBuilder().setVehicleID(entry1_3.getText()).build();
-			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
-				@Override
-				public void onNext(StatusResponse response3) {
-					reply1_3.setText(response3.getCurrentLocation() + response3.getCurrentSpeed());
-				}
-				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
-				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
-				}
-			};
-			
-			asyncStub1.getVehicleStatus(request3, responseObserver);
-			
-			try {
-				Thread.sleep(15000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+    			//retrieving reply from service
+    			ds.service1.AddResponse response = blockingStub.addVehicle(request);
+    			
+    			//displaying the response to the user
+    			reply1.setText(response.getVehicleID());
+            }else if (e.getActionCommand().equals("removeVehicle")) {
+    			//removeVehicle method             1 VS 1
+    			//preparing message to send
+    			ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry1.getText()).build();
+    			
+    			//retrieving reply from service			
+    			ds.service1.RemoveResponse response = blockingStub.removeVehicle(request);
+    			
+    			//displaying the response to the user
+    			reply1.setText(response.getVehicleID());
+            }else if (e.getActionCommand().equals("getVehicleStatus")) {           	
+    			//getVehicleStatus method             1 VS 2
+    			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry1.getText()).build();
+    			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
+    				@Override
+    				public void onNext(StatusResponse response) {
+    					reply1.setText(response.getCurrentLocation() + response.getCurrentSpeed());
+    				}
+    				
+    				@Override
+    				public void onError(Throwable t) {
+    					t.printStackTrace();
+    				}
+    				
+    				@Override
+    				public void onCompleted() {
+    					System.out.println("Stream is completed.");
+    				}
+    			};
+    			
+    			asyncStub1.getVehicleStatus(request, responseObserver);
+    			
+    			try {
+    				Thread.sleep(15000);
+    			} catch (InterruptedException e1) {
+    				// TODO Auto-generated catch block
+    				e1.printStackTrace();
+    			}
+            }
 			
 		}else if (label.equals("Invoke Service 2")) {
-			System.out.println("service 2 to be invoked ...");
+			System.out.println("Service 2 to be invoked ...");
 
 			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
-			CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub2 = CustomerServiceGrpc.newBlockingStub(channel);
+			CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub = CustomerServiceGrpc.newBlockingStub(channel);
 			CustomerServiceGrpc.CustomerServiceStub stub = CustomerServiceGrpc.newStub(channel);
-
-            //bookRide method                     2 VS 1
-			StreamObserver<BookRequest> requestObserver = stub.bookRide(new StreamObserver<BookResponse>() {
-				@Override
-				public void onNext(BookResponse response1) {
-					reply2_1.setText(response1.getConfirmMessage());
-				}
+			
+			if (e.getActionCommand().equals("bookRide")) {
+				//bookRide method                     2 VS 1
+				StreamObserver<BookRequest> requestObserver = stub.bookRide(new StreamObserver<BookResponse>() {
+					@Override
+					public void onNext(BookResponse response) {
+						reply2.setText(response.getConfirmMessage());
+					}
+					
+					@Override
+					public void onError(Throwable t) {
+						t.printStackTrace();
+					}
+					
+					@Override
+					public void onCompleted() {
+						System.out.println("Stream is completed.");
+					}
+				});
 				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
+				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry2_1.getText()).setDestination(entry2_2.getText()).build());
+				requestObserver.onCompleted();
 				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
-				}
-			});
-			
-			requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry2_1.getText()).setDestination(entry2_1.getText()).build());
-			requestObserver.onCompleted();
-			
-			/*ds.service2.BookRequest request1 = ds.service2.BookRequest.newBuilder().setCurrentLocation(entry2_1.getText()).setDestination(entry2_1.getText()).build();				
-		    StreamObserver<BookResponse> responseObserver = new StreamObserver<BookResponse>() {
-		    	@Override
-				public void onNext(BookResponse response1) {   
-					reply2_1.setText(response1.getConfirmMessage());
-				}
+			}else if (e.getActionCommand().equals("cancelRide")) {
+				//cancelRide method               1 VS 1
+				ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry2.getText()).build();
+									
+				ds.service2.CancelResponse response = blockingStub.cancelRide(request);
 				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
+				reply2.setText(response.getStatus());
 				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
-				}
-		    };
-		    asyncStub2.bookRide(request1, responseObserver);
-		  //why it shows error----------------------------------
-		    
-			try {
-				Thread.sleep(15000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}*/
-			
-			//cancelRide method               1 VS 1
-			ds.service2.CancelRequest request2 = ds.service2.CancelRequest.newBuilder().setRideID(entry2_2.getText()).build();
-								
-			ds.service2.CancelResponse response2 = blockingStub2.cancelRide(request2);
-			
-			reply2_2.setText(response2.getStatus());
-			
-			//getRideInfo method             1 VS 2
-			ds.service2.InfoRequest request3 = ds.service2.InfoRequest.newBuilder().setRideID(entry2_3.getText()).build();
-			StreamObserver<InfoResponse> responseObserver3 = new StreamObserver<InfoResponse>(){
-				@Override
-				public void onNext(InfoResponse response3) {
-					reply2_3.setText(response3.getStartingLocation() + response3.getDestination());
-				}
+			}else if (e.getActionCommand().equals("getRideInfo")){				
+				//getRideInfo method             1 VS 2
+				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry2.getText()).build();
+				StreamObserver<InfoResponse> responseObserver = new StreamObserver<InfoResponse>(){
+					@Override
+					public void onNext(InfoResponse response) {
+						reply2.setText(response.getStartingLocation() + response.getDestination());
+					}
+					
+					@Override
+					public void onError(Throwable t) {
+						t.printStackTrace();
+					}
+					
+					@Override
+					public void onCompleted() {
+						System.out.println("Stream is completed.");
+					}
+				};
 				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
+				asyncStub2.getRideInfo(request, responseObserver);
 				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
+				try {
+					Thread.sleep(15000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			};
-			
-			asyncStub2.getRideInfo(request3, responseObserver3);
-			
-			try {
-				Thread.sleep(15000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
-	
-			
+						
 		}else if (label.equals("Invoke Service 3")) {
-			System.out.println("service 3 to be invoked ...");
+			System.out.println("Service 3 to be invoked ...");
 
 			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
-			PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub3 = PaymentSystemGrpc.newBlockingStub(channel);
+			PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
+			
+			if (e.getActionCommand().equals("processPayment")) {
+				//processPayment method            1 VS 1
+			    double payment = Double.parseDouble(entry3.getText());
+				ds.service3.PaymentRequest request = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
+				
+				ds.service3.PaymentResponse response = blockingStub.processPayment(request);
+		
+				reply3.setText(response.getConfirmMessage());
+				
+			}else if (e.getActionCommand().equals("generateInvoice")) {				
+				//generateInvoice method           2 VS 2
 
-			//processPayment method            1 VS 1
-		    double payment = Double.parseDouble(entry3_2.getText());
-			ds.service3.PaymentRequest request1 = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
-			
-			ds.service3.PaymentResponse response1 = blockingStub3.processPayment(request1);
-	
-			reply3_1.setText(response1.getConfirmMessage());
-			
-			//generateInvoice method           2 VS 2
-			double amount = Double.parseDouble(entry3_2.getText());
-			StreamObserver<InvoiceResponse> responseObserver1 = new StreamObserver<InvoiceResponse>(){
-				@Override
-				public void onNext(InvoiceResponse response2) {
-					reply3_2.setText(response2.getInvoiceID() + response2.getConfirmMessage());
+				StreamObserver<InvoiceResponse> responseObserver = new StreamObserver<InvoiceResponse>(){
+					@Override
+					public void onNext(InvoiceResponse response) {
+						reply3.setText(response.getInvoiceID() + response.getConfirmMessage());
+					}
+					
+					@Override
+					public void onError(Throwable t) {
+						t.printStackTrace();
+					}
+					
+					@Override
+					public void onCompleted() {
+						System.out.println("Stream is completed.");
+					}
+				};
+				StreamObserver<InvoiceRequest> requestObserver = asyncStub3.generateInvoice(responseObserver);
+				double amount2 = Double.parseDouble(entry3_2.getText());
+				ds.service3.InvoiceRequest request = ds.service3.InvoiceRequest.newBuilder()
+						                              .setCustomerName(entry3_1.getText())
+						                              .setAmount(amount2)
+						                              .build(); 
+				try {
+
+					requestObserver.onNext(request);
+
+					// Mark the end of requests
+					requestObserver.onCompleted();
+					Thread.sleep(10000);
+
+				} catch (RuntimeException e1) {
+					e1.printStackTrace();
+				} catch (InterruptedException e1) {			
+					e1.printStackTrace();
 				}
 				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
+			}else if (e.getActionCommand().equals("handleRefunds")) {
+				//handleRefunds method              3 VS 2
+				StreamObserver<RefundsResponse> responseObserver = new StreamObserver<RefundsResponse>(){
+					@Override
+					public void onNext(RefundsResponse response) {
+						reply3.setText(response.getConfirmMessage() + response.getRefundID());
+					}
+					
+					@Override
+					public void onError(Throwable t) {
+						t.printStackTrace();
+					}
+					
+					@Override
+					public void onCompleted() {
+						System.out.println("Stream is completed.");
+					}
+				};
 				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
+				StreamObserver<RefundsRequest> requestObserver = asyncStub3.handleRefunds(responseObserver); 
+				double amount1 = Double.parseDouble(entry3_3.getText());
+				ds.service3.RefundsRequest request = ds.service3.RefundsRequest.newBuilder()
+						                              .setCustomerName(entry3_1.getText())
+						                              .setRideID(entry3_2.getText())
+						                              .setAmount(amount1)
+						                              .build(); 
+				try {
+
+					requestObserver.onNext(request);
+
+					// Mark the end of requests
+					requestObserver.onCompleted();
+					Thread.sleep(10000);
+
+				} catch (RuntimeException e1) {
+					e1.printStackTrace();
+				} catch (InterruptedException e1) {			
+					e1.printStackTrace();
 				}
-			};
-			StreamObserver<InvoiceRequest> requestObserver1 = asyncStub3.generateInvoice(responseObserver1);
-			double amount2 = Double.parseDouble(entry3_2.getText());
-			ds.service3.InvoiceRequest request2 = ds.service3.InvoiceRequest.newBuilder()
-					                              .setCustomerName(entry3_3.getText())
-					                              .setAmount(amount2)
-					                              .build(); 
-			try {
-
-				requestObserver1.onNext(request2);
-
-				// Mark the end of requests
-				requestObserver1.onCompleted();
-				Thread.sleep(10000);
-
-			} catch (RuntimeException e1) {
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {			
-				e1.printStackTrace();
 			}
-			
-			//handleRefunds method              3 VS 2
-			StreamObserver<RefundsResponse> responseObserver2 = new StreamObserver<RefundsResponse>(){
-				@Override
-				public void onNext(RefundsResponse response3) {
-					reply3_3.setText(response3.getConfirmMessage() + response3.getRefundID());
-				}
-				
-				@Override
-				public void onError(Throwable t) {
-					t.printStackTrace();
-				}
-				
-				@Override
-				public void onCompleted() {
-					System.out.println("Stream is completed.");
-				}
-			};
-			
-			StreamObserver<RefundsRequest> requestObserver2 = asyncStub3.handleRefunds(responseObserver2); //why it shows error----------
-			double amount1 = Double.parseDouble(entry3_3.getText());
-			ds.service3.RefundsRequest request3 = ds.service3.RefundsRequest.newBuilder()
-					                              .setCustomerName(entry3_3.getText())
-					                              .setRideID(entry3_3.getText())
-					                              .setAmount(amount1)
-					                              .build(); 
-			try {
-
-				requestObserver2.onNext(request3);
-
-				// Mark the end of requests
-				requestObserver2.onCompleted();
-				Thread.sleep(10000);
-
-			} catch (RuntimeException e1) {
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {			
-				e1.printStackTrace();
-			}
-
 		
 		}else{
 			
