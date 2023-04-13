@@ -16,30 +16,39 @@ import io.grpc.stub.StreamObserver;
 
 public class Service1 extends FleetManagementImplBase{
 	
-	public static void main(String[] args) throws InterruptedException, IOException {
-		Service1 fmService = new Service1();
+	public static void main(String[] args){
+		Service1 service1 = new Service1();
 		
-		Properties prop = fmService.getProperties();
+		Properties prop = service1.getProperties();
 		
-		fmService.registerService(prop);
+		service1.registerService(prop);
 		
 		int port = Integer.valueOf( prop.getProperty("50051") );
 			
-		Server server = ServerBuilder.forPort(port)				
-			    .addService(fmService)
-			    .build()
-			    .start();
+		try {
+			Server server = ServerBuilder.forPort(port)				
+				    .addService(service1)
+				    .build()
+				    .start();
 
-		System.out.println("Service-1 started, listening on " + port);
+			System.out.println("Service-1 started, listening on " + port);
 
-		server.awaitTermination();
+			server.awaitTermination();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	
 	private Properties getProperties() {
 		Properties prop = null;
 		
-		try(InputStream input = new FileInputStream("src/main/resources/transportSystem.properties")){
+		try(InputStream input = new FileInputStream("src/main/resources/service1.properties")){
 			
 			prop = new Properties();
 			
@@ -65,8 +74,8 @@ public class Service1 extends FleetManagementImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_http._tcp.local.");
-			String service_name = prop.getProperty("Service1_fleetManagement");
+			String service_type = prop.getProperty("_service1._tcp.local.");
+			String service_name = prop.getProperty("fleetManagement");
 			
 			int service_port = Integer.valueOf( prop.getProperty("50051"));
 			
@@ -93,10 +102,10 @@ public class Service1 extends FleetManagementImplBase{
 	public void addVehicle(AddRequest request, StreamObserver<AddResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String addedVehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity() + " seats.";
+		String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity();
 		
 		//preparing the response message
-		AddResponse reply = AddResponse.newBuilder().setVehicleID(addedVehicleID).build();
+		AddResponse reply = AddResponse.newBuilder().setVehicleID(vehicleID).build();
 		
 		responseObserver.onNext(reply);
 		responseObserver.onCompleted();		

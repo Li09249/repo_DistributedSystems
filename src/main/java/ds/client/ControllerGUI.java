@@ -5,7 +5,15 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
 
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceInfo;
+import javax.jmdns.ServiceListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,21 +24,25 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ds.service1.FleetManagementGrpc;
+import ds.service1.FleetManagementGrpc.FleetManagementBlockingStub;
 import ds.service1.FleetManagementGrpc.FleetManagementStub;
 import ds.service1.StatusResponse;
 import ds.service2.BookRequest;
 import ds.service2.BookResponse;
 import ds.service2.CustomerServiceGrpc;
+import ds.service2.CustomerServiceGrpc.CustomerServiceBlockingStub;
 import ds.service2.CustomerServiceGrpc.CustomerServiceStub;
 import ds.service2.InfoResponse;
 import ds.service3.InvoiceRequest;
 import ds.service3.InvoiceResponse;
 import ds.service3.PaymentSystemGrpc;
+import ds.service3.PaymentSystemGrpc.PaymentSystemBlockingStub;
 import ds.service3.PaymentSystemGrpc.PaymentSystemStub;
 import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
@@ -40,10 +52,18 @@ public class ControllerGUI implements ActionListener {
 	private JTextField entry3, entry3_1,entry3_2,entry3_3, reply3;
 	
 	private static FleetManagementStub asyncStub1;
+	private static FleetManagementBlockingStub blockingStub1;
 
 	private static CustomerServiceStub asyncStub2;
-	
+	private static CustomerServiceBlockingStub blockingStub2;
+
 	private static PaymentSystemStub asyncStub3;
+	private static PaymentSystemBlockingStub blockingStub3;
+	
+	private ServiceInfo service1Info;
+	private ServiceInfo service2Info;
+	private ServiceInfo service3Info;
+	
 	
 	private JPanel getService1JPanel() {
 
@@ -135,6 +155,8 @@ public class ControllerGUI implements ActionListener {
 		panel.add(panel4);
 		
 		return panel;
+		
+		
 
 	}
 	
@@ -352,6 +374,88 @@ public class ControllerGUI implements ActionListener {
 
 		gui.build();
 	}
+	public ControllerGUI() {
+		
+		String service1_type = "_service1._tcp.local.";
+		String service2_type = "_service2._tcp.local.";
+		String service3_type = "_service3._tcp.local.";
+		discoverService(service1_type);
+		discoverService(service2_type);
+		discoverService(service3_type);
+		
+	}
+	
+	private void discoverService(String service_type) {
+		try {
+			//create a JmDNS instance
+			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+			
+			//add a service listener for service 1
+			jmdns.addServiceListener(service_type, new ServiceListener() {
+				
+				@Override
+	            public void serviceResolved(ServiceEvent event) {
+	                                
+	                // Get the service info and connect to the service
+	                if (service_type.equals("_service1._tcp.local.")) {
+	                	System.out.println("Service 1 resolved: " + event.getInfo());
+	                	ServiceInfo service1Info = event.getInfo();
+	                	String host = service1Info.getHostAddress()[0];
+	                	int port = service1Info.getPort();
+	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+	                			                 .usePlaintext()
+	                			                 .build();
+	                    blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
+	                    asyncStub1 = FleetManagementGrpc.newStub(channel);
+	                    
+	                }else if(service_type.equals("_service2._tcp.local.")){
+	                	System.out.println("Service 2 resolved: " + event.getInfo());
+	                	ServiceInfo service2Info = event.getInfo();
+	                	String host = service2Info.getHostAddress()[0];
+	                	int port = service2Info.getPort();
+	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+	                			                 .usePlaintext()
+	                			                 .build();
+	                    blockingStub2 = CustomerServiceGrpc.newBlockingStub(channel);
+	                    asyncStub2 = CustomerServiceGrpc.newStub(channel);
+	                }else if(service_type.equals("_service3._tcp.local.")) {
+	                	System.out.println("Service 3 resolved: " + event.getInfo());
+	                	ServiceInfo service3Info = event.getInfo();
+	                	String host = service3Info.getHostAddress()[0];
+	                	int port = service3Info.getPort();
+	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+	                			                 .usePlaintext()
+	                			                 .build();
+	                	blockingStub3 = PaymentSystemGrpc.newBlockingStub(channel);
+	                    asyncStub3 = PaymentSystemGrpc.newStub(channel);
+	                }
+	            }
+				
+				@Override
+				public void serviceAdded(ServiceEvent event) {
+					System.out.println("Service added: " + event.getInfo());
+				}
+				
+				@Override
+				public void serviceRemoved(ServiceEvent event) {
+					System.out.println("Service removed: " + event.getInfo());					
+				}
+								
+			});
+			
+			// Wait a bit
+			Thread.sleep(2000);
+			jmdns.close();
+		} catch (UnknownHostException e) {
+			System.out.println(e.getMessage());
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private void build() { 
 
@@ -393,27 +497,48 @@ public class ControllerGUI implements ActionListener {
 			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
 			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
 			
-            if (e.getActionCommand().equals("addVehicle")) {
-            	//addVehicle method          1 VS 1
-    			//preparing message to send
-    			ds.service1.AddRequest request = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1.getText()).build();
+            if (label.equals("addVehicle")) {            	
+    			try {
+    				//addVehicle method          1 VS 1
+        			//preparing message to send
+					ds.service1.AddRequest request = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1.getText()).build();
 
-    			//retrieving reply from service
-    			ds.service1.AddResponse response = blockingStub.addVehicle(request);
-    			
-    			//displaying the response to the user
-    			reply1.setText(response.getVehicleID());
-            }else if (e.getActionCommand().equals("removeVehicle")) {
-    			//removeVehicle method             1 VS 1
-    			//preparing message to send
-    			ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry1.getText()).build();
-    			
-    			//retrieving reply from service			
-    			ds.service1.RemoveResponse response = blockingStub.removeVehicle(request);
-    			
-    			//displaying the response to the user
-    			reply1.setText(response.getVehicleID());
-            }else if (e.getActionCommand().equals("getVehicleStatus")) {           	
+					//retrieving reply from service
+					ds.service1.AddResponse response = blockingStub.addVehicle(request);
+					
+					//displaying the response to the user
+					reply1.setText(response.getVehicleID());
+				} catch (StatusRuntimeException e1) {
+					e1.getStatus();
+				}finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
+            
+            }else if (label.equals("removeVehicle")) {
+    			try {
+					//removeVehicle method             1 VS 1
+					//preparing message to send
+					ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry1.getText()).build();
+					
+					//retrieving reply from service			
+					ds.service1.RemoveResponse response = blockingStub.removeVehicle(request);
+					
+					//displaying the response to the user
+					reply1.setText(response.getVehicleID());
+				} catch (StatusRuntimeException e1) {
+					e1.getStatus();
+				}finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
+            }else if (label.equals("getVehicleStatus")) {           	
     			//getVehicleStatus method             1 VS 2
     			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry1.getText()).build();
     			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
@@ -450,7 +575,7 @@ public class ControllerGUI implements ActionListener {
 			CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub = CustomerServiceGrpc.newBlockingStub(channel);
 			CustomerServiceGrpc.CustomerServiceStub stub = CustomerServiceGrpc.newStub(channel);
 			
-			if (e.getActionCommand().equals("bookRide")) {
+			if (label.equals("bookRide")) {
 				//bookRide method                     2 VS 1
 				StreamObserver<BookRequest> requestObserver = stub.bookRide(new StreamObserver<BookResponse>() {
 					@Override
@@ -472,15 +597,25 @@ public class ControllerGUI implements ActionListener {
 				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry2_1.getText()).setDestination(entry2_2.getText()).build());
 				requestObserver.onCompleted();
 				
-			}else if (e.getActionCommand().equals("cancelRide")) {
-				//cancelRide method               1 VS 1
-				ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry2.getText()).build();
-									
-				ds.service2.CancelResponse response = blockingStub.cancelRide(request);
+			}else if (label.equals("cancelRide")) {
+				try {
+					//cancelRide method               1 VS 1
+					ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry2.getText()).build();
+										
+					ds.service2.CancelResponse response = blockingStub.cancelRide(request);
+					
+					reply2.setText(response.getStatus());
+				} catch (StatusRuntimeException e1) {
+					e1.getStatus();
+				}finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
 				
-				reply2.setText(response.getStatus());
-				
-			}else if (e.getActionCommand().equals("getRideInfo")){				
+			}else if (label.equals("getRideInfo")){				
 				//getRideInfo method             1 VS 2
 				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry2.getText()).build();
 				StreamObserver<InfoResponse> responseObserver = new StreamObserver<InfoResponse>(){
@@ -516,16 +651,26 @@ public class ControllerGUI implements ActionListener {
 			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
 			PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
 			
-			if (e.getActionCommand().equals("processPayment")) {
-				//processPayment method            1 VS 1
-			    double payment = Double.parseDouble(entry3.getText());
-				ds.service3.PaymentRequest request = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
+			if (label.equals("processPayment")) {
+				try {
+					//processPayment method            1 VS 1
+					double payment = Double.parseDouble(entry3.getText());
+					ds.service3.PaymentRequest request = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
+					
+					ds.service3.PaymentResponse response = blockingStub.processPayment(request);
+
+					reply3.setText(response.getConfirmMessage());
+				} catch (StatusRuntimeException e1) {
+					e1.getStatus();
+				}finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
 				
-				ds.service3.PaymentResponse response = blockingStub.processPayment(request);
-		
-				reply3.setText(response.getConfirmMessage());
-				
-			}else if (e.getActionCommand().equals("generateInvoice")) {				
+			}else if (label.equals("generateInvoice")) {				
 				//generateInvoice method           2 VS 2
 
 				StreamObserver<InvoiceResponse> responseObserver = new StreamObserver<InvoiceResponse>(){
@@ -564,7 +709,7 @@ public class ControllerGUI implements ActionListener {
 					e1.printStackTrace();
 				}
 				
-			}else if (e.getActionCommand().equals("handleRefunds")) {
+			}else if (label.equals("handleRefunds")) {
 				//handleRefunds method              3 VS 2
 				StreamObserver<RefundsResponse> responseObserver = new StreamObserver<RefundsResponse>(){
 					@Override
@@ -603,11 +748,13 @@ public class ControllerGUI implements ActionListener {
 				} catch (InterruptedException e1) {			
 					e1.printStackTrace();
 				}
+				
+				
 			}
 		
 		}else{
 			
-		}
+		     }
 
 	}
 }

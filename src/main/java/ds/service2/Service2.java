@@ -16,27 +16,40 @@ import io.grpc.stub.StreamObserver;
 
 public class Service2 extends CustomerServiceImplBase{
 	
-	public static void main(String[] args) throws InterruptedException, IOException {
-		Service2 csService = new Service2();
+	
+	public static void main(String[] args){
+		Service2 service2 = new Service2();
 		
-        Properties prop = csService.getProperties();
+		Properties prop = service2.getProperties();
 		
-		csService.registerService(prop);
+		service2.registerService(prop);
 		
 		int port = Integer.valueOf( prop.getProperty("50052") );
-		
-		Server server = ServerBuilder.forPort(port).addService(csService).build().start();
-		
-		System.out.println("Service-2 started, listening on " + port);
+			
+		try {
+			Server server = ServerBuilder.forPort(port)				
+				    .addService(service2)
+				    .build()
+				    .start();
 
-		server.awaitTermination();
-		
+			System.out.println("Service-2 started, listening on " + port);
+
+			server.awaitTermination();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	private Properties getProperties() {
 		Properties prop = null;
 		
-		try(InputStream input = new FileInputStream("src/main/resources/transportSystem.properties")){
+		try(InputStream input = new FileInputStream("src/main/resources/service2.properties")){
 			
 			prop = new Properties();
 			
@@ -62,8 +75,8 @@ public class Service2 extends CustomerServiceImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_http._tcp.local.");
-			String service_name = prop.getProperty("Service2_customerService");
+			String service_type = prop.getProperty("_service2._tcp.local.");
+			String service_name = prop.getProperty("customerService");
 			
 			int service_port = Integer.valueOf( prop.getProperty("50052"));
 			
@@ -84,7 +97,7 @@ public class Service2 extends CustomerServiceImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}    
+	}
 	
 	@Override
 	public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {

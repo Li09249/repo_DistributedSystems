@@ -1,5 +1,6 @@
 package ds.service3;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,26 +17,39 @@ import io.grpc.stub.StreamObserver;
 
 public class Service3 extends PaymentSystemImplBase{
 	
-	public static void main(String[] args) throws InterruptedException, IOException{
-		Service3 psService = new Service3();
+	public static void main(String[] args){
+		Service3 service3 = new Service3();
 		
-        Properties prop = psService.getProperties();
+		Properties prop = service3.getProperties();
 		
-		psService.registerService(prop);
+		service3.registerService(prop);
 		
 		int port = Integer.valueOf( prop.getProperty("50053") );
-		
-		Server server = ServerBuilder.forPort(port).addService(psService).build().start();
-		
-		System.out.println("Service-3 started, listening on " + port);
+			
+		try {
+			Server server = ServerBuilder.forPort(port)				
+				    .addService(service3)
+				    .build()
+				    .start();
 
-		server.awaitTermination();
+			System.out.println("Service-3 started, listening on " + port);
+
+			server.awaitTermination();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	private Properties getProperties() {
 		Properties prop = null;
 		
-		try(InputStream input = new FileInputStream("src/main/resources/transportSystem.properties")){
+		try(InputStream input = new FileInputStream("src/main/resources/service3.properties")){
 			
 			prop = new Properties();
 			
@@ -61,8 +75,8 @@ public class Service3 extends PaymentSystemImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_http._tcp.local.");
-			String service_name = prop.getProperty("Service3_PaymentSystem");
+			String service_type = prop.getProperty("_service3._tcp.local.");
+			String service_name = prop.getProperty("paymentSystem");
 			
 			int service_port = Integer.valueOf( prop.getProperty("50053"));
 			
