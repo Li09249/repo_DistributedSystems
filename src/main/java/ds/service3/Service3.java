@@ -20,11 +20,12 @@ public class Service3 extends PaymentSystemImplBase{
 	public static void main(String[] args){
 		Service3 service3 = new Service3();
 		
-		Properties prop = service3.getProperties();
+		//Properties prop = service3.getProperties();
 		
-		service3.registerService(prop);
+		//service3.registerService(prop);
 		
-		int port = Integer.valueOf( prop.getProperty("50053") );
+		//int port = Integer.valueOf( prop.getProperty("50053") );
+		int port = 50053;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -46,7 +47,7 @@ public class Service3 extends PaymentSystemImplBase{
 
 	}
 	
-	private Properties getProperties() {
+	/*private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service3.properties")){
@@ -97,13 +98,13 @@ public class Service3 extends PaymentSystemImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	@Override
 	public void processPayment(PaymentRequest request, StreamObserver<PaymentResponse> responseObserver) {
 		
 		//prepare the value be set back
-		String confirmMessage = "Payment successful. Paid a total of " + request.getPayment();
+		String confirmMessage = "Payment successful. Paid a total of " + request.getPayment() + " euro.";
 		
 		//preparing the response message
 		PaymentResponse reply = PaymentResponse.newBuilder().setConfirmMessage(confirmMessage).build();
@@ -122,11 +123,11 @@ public class Service3 extends PaymentSystemImplBase{
 			public void onNext(InvoiceRequest request) {
 				
 				//prepare the value be set back
-				String invoiceID = "Hello, " + request.getCustomerName() + ". Your invoice ID is : x21227993.";
-				String confirmMessage = "Amount is : " + request.getAmount() + "Invoice generated successfully!";
+				String invoiceID = "Hello, " + request.getCustomerName() + ". Your Invoice generated successfully!";
+				String confirmMessage = " Amount is " + request.getAmount() + " euro. Invoice ID is x2122.";
 				
 				//preparing the response message
-				InvoiceResponse reply = InvoiceResponse.newBuilder().setInvoiceID(confirmMessage).setConfirmMessage(invoiceID).build();
+				InvoiceResponse reply = InvoiceResponse.newBuilder().setInvoiceID(invoiceID).setConfirmMessage(confirmMessage).build();
 				
 				responseObserver.onNext(reply);
 			}
@@ -157,8 +158,8 @@ public class Service3 extends PaymentSystemImplBase{
 			public void onNext(RefundsRequest request) {
 				
 				//prepare the value be set back			
-				String confirmMessage = "Hello, " + request.getCustomerName() + ". Your ride ID x666, amount is " + request.getAmount() + ", has been refunded successfully.";
-				String refundID = "Refund ID is : x888.";
+				String confirmMessage = "Hello, " + request.getCustomerName() + ". Your ride ID is x666. Amount is " + request.getAmount() + " euro, has been refunded successfully.";
+				String refundID = "Refund ID is x888.";
 				
 				//preparing the response message
 				RefundsResponse reply = RefundsResponse.newBuilder().setConfirmMessage(confirmMessage).setRefundID(refundID).build();

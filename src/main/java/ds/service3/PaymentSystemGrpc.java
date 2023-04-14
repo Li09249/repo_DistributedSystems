@@ -18,6 +18,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 /**
  * <pre>
  * Interface exported by the server.
+ * Service Definition
  * </pre>
  */
 @javax.annotation.Generated(
@@ -152,6 +153,7 @@ public final class PaymentSystemGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static abstract class PaymentSystemImplBase implements io.grpc.BindableService {
@@ -207,6 +209,7 @@ public final class PaymentSystemGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class PaymentSystemStub extends io.grpc.stub.AbstractStub<PaymentSystemStub> {
@@ -253,6 +256,7 @@ public final class PaymentSystemGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class PaymentSystemBlockingStub extends io.grpc.stub.AbstractStub<PaymentSystemBlockingStub> {
@@ -282,6 +286,7 @@ public final class PaymentSystemGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class PaymentSystemFutureStub extends io.grpc.stub.AbstractStub<PaymentSystemFutureStub> {

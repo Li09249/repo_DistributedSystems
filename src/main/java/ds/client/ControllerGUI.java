@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -42,14 +44,31 @@ import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
 	
-	private JTextField entry1, reply1;
-	private JTextField entry2, entry2_1,entry2_2, reply2;
-	private JTextField entry3, entry3_1,entry3_2,entry3_3, reply3;
+	private JTextField entry1;
+	private JTextArea reply1;
+	private JTextField entry2;
+	private JTextArea reply2;
+	private JTextField entry3;
+	private JTextArea reply3;
+	private JTextField entry4_1,entry4_2;
+	private JTextArea reply4;
+	private JTextField entry5;
+	private JTextArea reply5;
+	private JTextField entry6;
+	private JTextArea reply6;
+	private JTextField entry7;
+	private JTextArea reply7;
+	private JTextField entry8_1,entry8_2;
+	private JTextArea reply8;
+	private JTextField entry9_1,entry9_2,entry9_3;
+	private JTextArea reply9;
+	
 	
 	private static FleetManagementStub asyncStub1;
 	private static FleetManagementBlockingStub blockingStub1;
@@ -59,314 +78,324 @@ public class ControllerGUI implements ActionListener {
 
 	private static PaymentSystemStub asyncStub3;
 	private static PaymentSystemBlockingStub blockingStub3;
+	private static PaymentSystemStub asyncStub4;
+	private static PaymentSystemBlockingStub blockingStub4;
 	
 	private ServiceInfo service1Info;
 	private ServiceInfo service2Info;
 	private ServiceInfo service3Info;
 	
 	
-	private JPanel getService1JPanel() {
+	private JPanel getService1Method1JPanel() {
 
-		JPanel panel = new JPanel();		
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
-		panel.setLayout(boxlayout);
-		
-		//service 1
-		JPanel panel1 = new JPanel();
-		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
-		panel1.setLayout(boxlayout1);
-		
-		JButton button4 = new JButton("Invoke Service 1");
-		button4.addActionListener(this);
-		Font font = button4.getFont();
-		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
-		panel1.add(Box.createHorizontalGlue());
-		panel1.add(button4);
-		panel.add(panel1);
-		
-		//method 1
-		JPanel panel2 = new JPanel();
-		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
-		panel2.setLayout(boxlayout2);
-		
-		JLabel label2 = new JLabel("tgCapacity");
-		panel2.add(label2);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry1 = new JTextField("",30);
-		panel2.add(entry1);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+        //method 1
+		JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
 
-		JButton button1 = new JButton("addVehicle");
-		button1.addActionListener(this);
-		button1.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
-		panel2.add(button1);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label = new JLabel("Service 1.1: tgCapacity");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry1 = new JTextField("",10);
+        panel.add(entry1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply1 = new JTextField("", 30);
-		reply1.setEditable(false);
-		panel2.add(reply1);
-		panel.add(panel2);
-		
-		//method 2
-		JPanel panel3 = new JPanel();
-		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
-		panel3.setLayout(boxlayout3);
-		
-		JLabel label3 = new JLabel("Capacity");
-		panel3.add(label3);
-		panel3.add(Box.createRigidArea(new Dimension(21, 0)));
-		entry1 = new JTextField("",30);
-		panel3.add(entry1);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        JButton button = new JButton("addVehicle");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("removeVehicle");
-		button2.addActionListener(this);
-		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
-		panel3.add(button2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        reply1 = new JTextArea(3,20);
+        reply1.setLineWrap(true);
+        reply1.setWrapStyleWord(true);
+        reply1.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply1);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
 
-		reply1 = new JTextField("", 30);
-		reply1.setEditable(false);
-		panel3.add(reply1);
-		panel.add(panel3);
-		
-		
-		//method 3
-		JPanel panel4 = new JPanel();
-		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
-		panel4.setLayout(boxlayout4);
-		
-		JLabel label4 = new JLabel("VehicleID");
-		panel4.add(label4);
-		panel4.add(Box.createRigidArea(new Dimension(16, 0)));
-		entry1 = new JTextField("",30);
-		panel4.add(entry1);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		JButton button3 = new JButton("getVehicleStatus");
-		button3.addActionListener(this);
-		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
-		panel4.add(button3);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-
-		reply1 = new JTextField("", 30);
-		reply1.setEditable(false);
-		panel4.add(reply1);
-		panel.add(panel4);
-		
-		return panel;
-		
-		
-
-	}
+        return panel;
+    }
 	
-	private JPanel getService2JPanel() {
-		
-		JPanel panel = new JPanel();		
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
-		panel.setLayout(boxlayout);
-		
-		//service 2
-		JPanel panel1 = new JPanel();
-		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
-		panel1.setLayout(boxlayout1);
-		
-		JButton button4 = new JButton("Invoke Service 2");
-		button4.addActionListener(this);
-		Font font = button4.getFont();
-		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
-		panel1.add(Box.createHorizontalGlue());
-		panel1.add(button4);
-		panel.add(panel1);
-		
-		//method 1
-		JPanel panel2 = new JPanel();
-		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
-		panel2.setLayout(boxlayout2);
-		
-		JLabel label2 = new JLabel("crLocation");
-		panel2.add(label2);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry2_1 = new JTextField("",9);
-		panel2.add(entry2_1);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
-		JLabel label2_2 = new JLabel("Destination");
-		panel2.add(label2_2);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry2_2 = new JTextField("",9);
-		panel2.add(entry2_2);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+    private JPanel getService1Method2JPanel(){
+        //method 2
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
 
-		JButton button1 = new JButton("bookRide");
-		button1.addActionListener(this);
-		button1.setPreferredSize(new Dimension(120, button1.getPreferredSize().height));
-		panel2.add(button1);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label = new JLabel("Service 1.2: Capacity");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry2 = new JTextField("",10);
+        panel.add(entry2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply2 = new JTextField("", 30);
-		reply2.setEditable(false);
-		panel2.add(reply2);		
-		panel.add(panel2);
-		
-		//method 2
-		JPanel panel3 = new JPanel();
-		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
-		panel3.setLayout(boxlayout3);
-		
-		JLabel label3 = new JLabel("RideID");
-		panel3.add(label3);
-		panel3.add(Box.createRigidArea(new Dimension(32, 0)));
-		entry2 = new JTextField("",30);
-		panel3.add(entry2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        JButton button = new JButton("removeVehicle");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("cancelRide");
-		button2.addActionListener(this);
-		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
-		panel3.add(button2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        reply2 = new JTextArea(3,20);
+        reply2.setLineWrap(true);
+        reply2.setWrapStyleWord(true);
+        reply2.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply2);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
 
-		reply2 = new JTextField("", 30);
-		reply2.setEditable(false);
-		panel3.add(reply2);
-		panel.add(panel3);
-		
-		//method 3
-		JPanel panel4 = new JPanel();
-		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
-		panel4.setLayout(boxlayout4);
-		
-		JLabel label4 = new JLabel("RideID");
-		panel4.add(label4);
-		panel4.add(Box.createRigidArea(new Dimension(32, 0)));
-		entry2 = new JTextField("",30);
-		panel4.add(entry2);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+        return panel;
+    }
 
-		JButton button3 = new JButton("getRideInfo");
-		button3.addActionListener(this);
-		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
-		panel4.add(button3);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+    private JPanel getService1Method3JPanel(){
+        //method 3
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
 
-		reply2 = new JTextField("", 30);
-		reply2.setEditable(false);
-		panel4.add(reply2);
-		panel.add(panel4);
+        JLabel label = new JLabel("Service 1.3: VehicleID");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry3 = new JTextField("",10);
+        panel.add(entry3);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		return panel;
+        JButton button = new JButton("getVehicleStatus");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-	}
-	
-	private JPanel getService3JPanel() {
+        reply3 = new JTextArea(3,20);
+        reply3.setLineWrap(true);
+        reply3.setWrapStyleWord(true);
+        reply3.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply3);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
 
-		JPanel panel = new JPanel();		
-		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);	
-		panel.setLayout(boxlayout);
-		
-		//service 3
-		JPanel panel1 = new JPanel();
-		BoxLayout boxlayout1 = new BoxLayout(panel1, BoxLayout.X_AXIS);
-		panel1.setLayout(boxlayout1);
-		
-		JButton button4 = new JButton("Invoke Service 3");
-		button4.addActionListener(this);
-		Font font = button4.getFont();
-		button4.setFont(new Font(font.getName(), Font.BOLD, 18));
-		panel1.add(Box.createHorizontalGlue());
-		panel1.add(button4);
-		panel.add(panel1);
+        return panel;
+    }
 
-		//method 1
-		JPanel panel2 = new JPanel();
-		BoxLayout boxlayout2 = new BoxLayout(panel2, BoxLayout.X_AXIS);
-		panel2.setLayout(boxlayout2);
-		
-		JLabel label2 = new JLabel("Payment");
-		panel2.add(label2);
-		panel2.add(Box.createRigidArea(new Dimension(18, 0)));
-		entry3 = new JTextField("",30);
-		panel2.add(entry3);
-		panel2.add(Box.createRigidArea(new Dimension(10, 0)));
+    private JPanel getService2Method1JPanel() {
 
-		JButton button1 = new JButton("processPayment");
-		button1.addActionListener(this);
-		button1.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
-		panel2.add(button1);
-		panel2.add(Box.createRigidArea(new Dimension(9, 0)));
+        //method 1
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
 
-		reply3 = new JTextField("", 30);
-		reply3.setEditable(false);
-		panel2.add(reply3);
-		panel.add(panel2);
-		
-		//method 2
-		JPanel panel3 = new JPanel();
-		BoxLayout boxlayout3 = new BoxLayout(panel3, BoxLayout.X_AXIS);
-		panel3.setLayout(boxlayout3);
-		
-		JLabel label3 = new JLabel("custName");
-		panel3.add(label3);
-		panel3.add(Box.createRigidArea(new Dimension(11, 0)));
-		entry3_1 = new JTextField("",12);
-		panel3.add(entry3_1);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
-		JLabel label3_2 = new JLabel("Amount");
-		panel3.add(label3_2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry3_2 = new JTextField("",3);
-		panel3.add(entry3_2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label1 = new JLabel("Service 2.1: crLocation");
+        panel.add(label1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry4_1 = new JTextField("",10);
+        panel.add(entry4_1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label2 = new JLabel("Destination");
+        panel.add(label2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry4_2 = new JTextField("",10);
+        panel.add(entry4_2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		JButton button2 = new JButton("generateInvoice");
-		button2.addActionListener(this);
-		button2.setPreferredSize(new Dimension(168, button2.getPreferredSize().height));
-		panel3.add(button2);
-		panel3.add(Box.createRigidArea(new Dimension(10, 0)));
+        JButton button = new JButton("bookRide");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(120, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-		reply3 = new JTextField("", 30);
-		reply3.setEditable(false);
-		panel3.add(reply3);
-		panel.add(panel3);
-		
-		//method 3
-		JPanel panel4 = new JPanel();
-		BoxLayout boxlayout4 = new BoxLayout(panel4, BoxLayout.X_AXIS);
-		panel4.setLayout(boxlayout4);
-		
-		JLabel label4 = new JLabel("custName");
-		panel4.add(label4);
-		panel4.add(Box.createRigidArea(new Dimension(11, 0)));
-		entry3_1 = new JTextField("",10);
-		panel4.add(entry3_1);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-		JLabel label4_2 = new JLabel("RideID");
-		panel4.add(label4_2);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry3_2 = new JTextField("",10);
-		panel4.add(entry3_2);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-		JLabel label4_3 = new JLabel("Amount");
-		panel4.add(label4_3);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
-		entry3_3 = new JTextField("",10);
-		panel4.add(entry3_3);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+        reply4 = new JTextArea(3,20);
+        reply4.setLineWrap(true);
+        reply4.setWrapStyleWord(true);
+        reply4.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply4);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
 
-		JButton button3 = new JButton("handleRefunds");
-		button3.addActionListener(this);
-		button3.setPreferredSize(new Dimension(168, button3.getPreferredSize().height));
-		panel4.add(button3);
-		panel4.add(Box.createRigidArea(new Dimension(10, 0)));
+        return panel;
 
-		reply3 = new JTextField("", 30);
-		reply3.setEditable(false);
-		panel4.add(reply3);
-        panel.add(panel4);
+    }
 
-		return panel;
+    private JPanel getService2Method2JPanel(){
+        //method 2
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
 
-	}
+        JLabel label = new JLabel("Service 2.2: RideID");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry5 = new JTextField("",10);
+        panel.add(entry5);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JButton button = new JButton("cancelRide");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        reply5 = new JTextArea(3,20);
+        reply5.setLineWrap(true);
+        reply5.setWrapStyleWord(true);
+        reply5.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply5);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
+
+        return panel;
+
+    }
+
+    private JPanel getService2Method3JPanel(){
+        //method 3
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
+
+        JLabel label = new JLabel("Service 2.3: RideID");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry6 = new JTextField("",10);
+        panel.add(entry6);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JButton button = new JButton("getRideInfo");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        reply6 = new JTextArea(3,20);
+        reply6.setLineWrap(true);
+        reply6.setWrapStyleWord(true);
+        reply6.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply6);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
+
+        return panel;
+    }
+
+    private JPanel getService3Method1JPanel() {
+
+        //method 1
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
+
+        JLabel label = new JLabel("Service 3.1: Payment");
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry7 = new JTextField("",10);
+        panel.add(entry7);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JButton button = new JButton("processPayment");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        reply7 = new JTextArea(3,20);
+        reply7.setLineWrap(true);
+        reply7.setWrapStyleWord(true);
+        reply7.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply7);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
+
+        return panel;
+
+    }
+
+    private JPanel getService3Method2JPanel(){
+        //method 2
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
+
+        JLabel label1 = new JLabel("Service 3.2: custName");
+        panel.add(label1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry8_1 = new JTextField("",10);
+        panel.add(entry8_1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label2 = new JLabel("Amount");
+        panel.add(label2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry8_2 = new JTextField("",10);
+        panel.add(entry8_2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JButton button = new JButton("generateInvoice");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        reply8 = new JTextArea(3,20);
+        reply8.setLineWrap(true);
+        reply8.setWrapStyleWord(true);
+        reply8.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply8);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
+
+        return panel;
+
+    }
+
+    private JPanel getService3Method3JPanel(){
+        //method 3
+    	JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        
+
+        JLabel label1 = new JLabel("Service 3.3: custName");
+        panel.add(label1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry9_1 = new JTextField("",10);
+        panel.add(entry9_1);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label2 = new JLabel("RideID");
+        panel.add(label2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry9_2 = new JTextField("",10);
+        panel.add(entry9_2);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        JLabel label3 = new JLabel("Amount");
+        panel.add(label3);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+        entry9_3 = new JTextField("",10);
+        panel.add(entry9_3);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JButton button = new JButton("handleRefunds");
+        button.addActionListener(this);
+        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        reply9 = new JTextArea(3,20);
+        reply9.setLineWrap(true);
+        reply9.setWrapStyleWord(true);
+        reply9.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reply9);
+        panel.add(scrollPane);
+        
+        panel.setLayout(boxlayout);
+        
+
+        return panel;
+    }
 	
 	public static void main(String[] args) {
 
@@ -374,7 +403,7 @@ public class ControllerGUI implements ActionListener {
 
 		gui.build();
 	}
-	public ControllerGUI() {
+	/*public ControllerGUI() {
 		
 		String service1_type = "_service1._tcp.local.";
 		String service2_type = "_service2._tcp.local.";
@@ -454,7 +483,7 @@ public class ControllerGUI implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	
 	private void build() { 
@@ -473,12 +502,18 @@ public class ControllerGUI implements ActionListener {
 		// Set border for the panel
 		panel.setBorder(new EmptyBorder(new Insets(50, 100, 50, 100)));
 			
-		panel.add( getService1JPanel() );
-		panel.add( getService2JPanel() );
-		panel.add( getService3JPanel() );
+		panel.add( getService1Method1JPanel() );
+		panel.add( getService1Method2JPanel() );
+		panel.add( getService1Method3JPanel() );
+		panel.add( getService2Method1JPanel() );
+		panel.add( getService2Method2JPanel() );
+		panel.add( getService2Method3JPanel() );
+		panel.add( getService3Method1JPanel() );
+		panel.add( getService3Method2JPanel() );
+		panel.add( getService3Method3JPanel() );
 
 		// Set size for the frame
-		frame.setSize(400, 400);
+		frame.setSize(300, 300);
 
 		// Set the window to be visible as the default to be false
 		frame.add(panel);
@@ -491,13 +526,13 @@ public class ControllerGUI implements ActionListener {
 		JButton button = (JButton)e.getSource();
 		String label = button.getActionCommand();  
 
-		if (label.equals("Invoke Service 1")) {
-			System.out.println("Service 1 to be invoked ...");
-
-			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
-			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
+		/*if (label.equals("Invoke Service 1")) {
+			System.out.println("Service 1 to be invoked ...");*/
 			
-            if (label.equals("addVehicle")) {            	
+            if (label.equals("addVehicle")) { 
+            	System.out.println("service 1 method 1 to be invoked ...");
+            	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
+    			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
     			try {
     				//addVehicle method          1 VS 1
         			//preparing message to send
@@ -509,7 +544,13 @@ public class ControllerGUI implements ActionListener {
 					//displaying the response to the user
 					reply1.setText(response.getVehicleID());
 				} catch (StatusRuntimeException e1) {
-					e1.getStatus();
+					if(e1.getStatus()==Status.UNAVAILABLE) {
+						System.out.println("Error: Service is unavailable.");
+					}else if(e1.getStatus()==Status.NOT_FOUND) {
+						System.out.println("Error: Method is not found.");
+					}else {
+						System.out.println("Error: " + e1.getStatus());
+					}
 				}finally {
 					try {
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
@@ -519,18 +560,27 @@ public class ControllerGUI implements ActionListener {
 				}
             
             }else if (label.equals("removeVehicle")) {
+            	System.out.println("service 1 method 2 to be invoked ...");
+            	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
+    			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
     			try {
 					//removeVehicle method             1 VS 1
 					//preparing message to send
-					ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry1.getText()).build();
+					ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry2.getText()).build();
 					
 					//retrieving reply from service			
 					ds.service1.RemoveResponse response = blockingStub.removeVehicle(request);
 					
 					//displaying the response to the user
-					reply1.setText(response.getVehicleID());
+					reply2.setText(response.getVehicleID());
 				} catch (StatusRuntimeException e1) {
-					e1.getStatus();
+					if(e1.getStatus()==Status.UNAVAILABLE) {
+						System.out.println("Error: Service is unavailable.");
+					}else if(e1.getStatus()==Status.NOT_FOUND) {
+						System.out.println("Error: Method is not found.");
+					}else {
+						System.out.println("Error: " + e1.getStatus());
+					}
 				}finally {
 					try {
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
@@ -538,13 +588,16 @@ public class ControllerGUI implements ActionListener {
 						e1.printStackTrace();
 					}
 				}
-            }else if (label.equals("getVehicleStatus")) {           	
+            }else if (label.equals("getVehicleStatus")) {   
+            	System.out.println("service 1 method 3 to be invoked ...");
+            	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
+    			FleetManagementGrpc.FleetManagementStub asyncStub1 = FleetManagementGrpc.newStub(channel);
     			//getVehicleStatus method             1 VS 2
-    			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry1.getText()).build();
+    			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry3.getText()).build();
     			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
     				@Override
     				public void onNext(StatusResponse response) {
-    					reply1.setText(response.getCurrentLocation() + response.getCurrentSpeed());
+    					reply3.setText(response.getCurrentLocation() + response.getCurrentSpeed());
     				}
     				
     				@Override
@@ -561,26 +614,25 @@ public class ControllerGUI implements ActionListener {
     			asyncStub1.getVehicleStatus(request, responseObserver);
     			
     			try {
-    				Thread.sleep(15000);
+    				Thread.sleep(1000);
     			} catch (InterruptedException e1) {
     				// TODO Auto-generated catch block
     				e1.printStackTrace();
     			}
-            }
+            //}
 			
-		}else if (label.equals("Invoke Service 2")) {
-			System.out.println("Service 2 to be invoked ...");
-
-			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
-			CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub = CustomerServiceGrpc.newBlockingStub(channel);
-			CustomerServiceGrpc.CustomerServiceStub stub = CustomerServiceGrpc.newStub(channel);
+		/*}else if (label.equals("Invoke Service 2")) {
+			System.out.println("Service 2 to be invoked ...");*/
 			
-			if (label.equals("bookRide")) {
+            }else if (label.equals("bookRide")) {
+            	System.out.println("service 2 method 1 to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
+				CustomerServiceGrpc.CustomerServiceStub stub = CustomerServiceGrpc.newStub(channel);
 				//bookRide method                     2 VS 1
 				StreamObserver<BookRequest> requestObserver = stub.bookRide(new StreamObserver<BookResponse>() {
 					@Override
 					public void onNext(BookResponse response) {
-						reply2.setText(response.getConfirmMessage());
+						reply4.setText(response.getConfirmMessage());
 					}
 					
 					@Override
@@ -594,19 +646,28 @@ public class ControllerGUI implements ActionListener {
 					}
 				});
 				
-				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry2_1.getText()).setDestination(entry2_2.getText()).build());
+				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry4_1.getText()).setDestination(entry4_2.getText()).build());
 				requestObserver.onCompleted();
 				
 			}else if (label.equals("cancelRide")) {
+				System.out.println("service 2 method 2 to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
+				CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub = CustomerServiceGrpc.newBlockingStub(channel);
 				try {
 					//cancelRide method               1 VS 1
-					ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry2.getText()).build();
+					ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry5.getText()).build();
 										
 					ds.service2.CancelResponse response = blockingStub.cancelRide(request);
 					
-					reply2.setText(response.getStatus());
+					reply5.setText(response.getStatus());
 				} catch (StatusRuntimeException e1) {
-					e1.getStatus();
+					if(e1.getStatus()==Status.UNAVAILABLE) {
+						System.out.println("Error: Service is unavailable.");
+					}else if(e1.getStatus()==Status.NOT_FOUND) {
+						System.out.println("Error: Method is not found.");
+					}else {
+						System.out.println("Error: " + e1.getStatus());
+					}
 				}finally {
 					try {
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
@@ -615,13 +676,16 @@ public class ControllerGUI implements ActionListener {
 					}
 				}
 				
-			}else if (label.equals("getRideInfo")){				
+			}else if (label.equals("getRideInfo")){	
+				System.out.println("service 2 method 3 to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
+				CustomerServiceGrpc.CustomerServiceStub asyncStub2 = CustomerServiceGrpc.newStub(channel);
 				//getRideInfo method             1 VS 2
-				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry2.getText()).build();
+				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry6.getText()).build();
 				StreamObserver<InfoResponse> responseObserver = new StreamObserver<InfoResponse>(){
 					@Override
 					public void onNext(InfoResponse response) {
-						reply2.setText(response.getStartingLocation() + response.getDestination());
+						reply6.setText(response.getStartingLocation() + response.getDestination());
 					}
 					
 					@Override
@@ -638,30 +702,36 @@ public class ControllerGUI implements ActionListener {
 				asyncStub2.getRideInfo(request, responseObserver);
 				
 				try {
-					Thread.sleep(15000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}
+			//}
 						
-		}else if (label.equals("Invoke Service 3")) {
-			System.out.println("Service 3 to be invoked ...");
-
-			ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
-			PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
+		/*}else if (label.equals("Invoke Service 3")) {
+			System.out.println("Service 3 to be invoked ...");*/
 			
-			if (label.equals("processPayment")) {
+			}else if (label.equals("processPayment")) {
+				System.out.println("service 3 method 1to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
+				PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
 				try {
 					//processPayment method            1 VS 1
-					double payment = Double.parseDouble(entry3.getText());
+					double payment = Double.parseDouble(entry7.getText());
 					ds.service3.PaymentRequest request = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
 					
 					ds.service3.PaymentResponse response = blockingStub.processPayment(request);
 
-					reply3.setText(response.getConfirmMessage());
+					reply7.setText(response.getConfirmMessage());
 				} catch (StatusRuntimeException e1) {
-					e1.getStatus();
+					if(e1.getStatus()==Status.UNAVAILABLE) {
+						System.out.println("Error: Service is unavailable.");
+					}else if(e1.getStatus()==Status.NOT_FOUND) {
+						System.out.println("Error: Method is not found.");
+					}else {
+						System.out.println("Error: " + e1.getStatus());
+					}
 				}finally {
 					try {
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
@@ -670,13 +740,16 @@ public class ControllerGUI implements ActionListener {
 					}
 				}
 				
-			}else if (label.equals("generateInvoice")) {				
+			}else if (label.equals("generateInvoice")) {
+				System.out.println("service 3 method 2 to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
+				PaymentSystemGrpc.PaymentSystemStub asyncStub3 = PaymentSystemGrpc.newStub(channel);
 				//generateInvoice method           2 VS 2
 
 				StreamObserver<InvoiceResponse> responseObserver = new StreamObserver<InvoiceResponse>(){
 					@Override
 					public void onNext(InvoiceResponse response) {
-						reply3.setText(response.getInvoiceID() + response.getConfirmMessage());
+						reply8.setText(response.getInvoiceID() + response.getConfirmMessage());
 					}
 					
 					@Override
@@ -690,9 +763,9 @@ public class ControllerGUI implements ActionListener {
 					}
 				};
 				StreamObserver<InvoiceRequest> requestObserver = asyncStub3.generateInvoice(responseObserver);
-				double amount2 = Double.parseDouble(entry3_2.getText());
+				double amount2 = Double.parseDouble(entry8_2.getText());
 				ds.service3.InvoiceRequest request = ds.service3.InvoiceRequest.newBuilder()
-						                              .setCustomerName(entry3_1.getText())
+						                              .setCustomerName(entry8_1.getText())
 						                              .setAmount(amount2)
 						                              .build(); 
 				try {
@@ -701,7 +774,7 @@ public class ControllerGUI implements ActionListener {
 
 					// Mark the end of requests
 					requestObserver.onCompleted();
-					Thread.sleep(10000);
+					Thread.sleep(1000);
 
 				} catch (RuntimeException e1) {
 					e1.printStackTrace();
@@ -710,11 +783,14 @@ public class ControllerGUI implements ActionListener {
 				}
 				
 			}else if (label.equals("handleRefunds")) {
+				System.out.println("service 3 method 3 to be invoked ...");
+				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
+				PaymentSystemGrpc.PaymentSystemStub asyncStub4 = PaymentSystemGrpc.newStub(channel);
 				//handleRefunds method              3 VS 2
 				StreamObserver<RefundsResponse> responseObserver = new StreamObserver<RefundsResponse>(){
 					@Override
 					public void onNext(RefundsResponse response) {
-						reply3.setText(response.getConfirmMessage() + response.getRefundID());
+						reply9.setText(response.getConfirmMessage() + response.getRefundID());
 					}
 					
 					@Override
@@ -728,11 +804,11 @@ public class ControllerGUI implements ActionListener {
 					}
 				};
 				
-				StreamObserver<RefundsRequest> requestObserver = asyncStub3.handleRefunds(responseObserver); 
-				double amount1 = Double.parseDouble(entry3_3.getText());
+				StreamObserver<RefundsRequest> requestObserver = asyncStub4.handleRefunds(responseObserver); 
+				double amount1 = Double.parseDouble(entry9_3.getText());
 				ds.service3.RefundsRequest request = ds.service3.RefundsRequest.newBuilder()
-						                              .setCustomerName(entry3_1.getText())
-						                              .setRideID(entry3_2.getText())
+						                              .setCustomerName(entry9_1.getText())
+						                              .setRideID(entry9_2.getText())
 						                              .setAmount(amount1)
 						                              .build(); 
 				try {
@@ -741,7 +817,7 @@ public class ControllerGUI implements ActionListener {
 
 					// Mark the end of requests
 					requestObserver.onCompleted();
-					Thread.sleep(10000);
+					Thread.sleep(1000);
 
 				} catch (RuntimeException e1) {
 					e1.printStackTrace();
@@ -750,7 +826,7 @@ public class ControllerGUI implements ActionListener {
 				}
 				
 				
-			}
+			//}
 		
 		}else{
 			

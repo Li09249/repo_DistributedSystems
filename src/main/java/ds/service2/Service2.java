@@ -20,11 +20,12 @@ public class Service2 extends CustomerServiceImplBase{
 	public static void main(String[] args){
 		Service2 service2 = new Service2();
 		
-		Properties prop = service2.getProperties();
+		//Properties prop = service2.getProperties();
 		
-		service2.registerService(prop);
+		//service2.registerService(prop);
 		
-		int port = Integer.valueOf( prop.getProperty("50052") );
+		//int port = Integer.valueOf( prop.getProperty("50052") );
+		int port = 50052;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -46,7 +47,7 @@ public class Service2 extends CustomerServiceImplBase{
 
 	}
 	
-	private Properties getProperties() {
+	/*private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service2.properties")){
@@ -97,7 +98,7 @@ public class Service2 extends CustomerServiceImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	@Override
 	public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {
@@ -107,7 +108,8 @@ public class Service2 extends CustomerServiceImplBase{
 			public void onNext(BookRequest request) {
 				
 				//prepare the value to be set back
-				String message = "Book ride successfully. Current location : " + request.getCurrentLocation() + ", Destination : " + request.getDestination() + ".";
+				String message = "Book ride successfully. Current location : " + request.getCurrentLocation() 
+				                 + ". Destination : " + request.getDestination() + ". Enjoy your ride.";
 				
 				//preparing the response message
 				BookResponse reply = BookResponse.newBuilder().setConfirmMessage(message).build();
@@ -135,7 +137,7 @@ public class Service2 extends CustomerServiceImplBase{
 	public void cancelRide(CancelRequest request, StreamObserver<CancelResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String message = "Hello, Your ride ID is : " + request.getRideID() + ". has been cancelled successfully.";
+		String message = "Hello, your ride ID is " + request.getRideID() + " has been cancelled successfully.";
 		
 		//preparing the response message
 		CancelResponse reply = CancelResponse.newBuilder().setStatus(message).build();
@@ -149,8 +151,8 @@ public class Service2 extends CustomerServiceImplBase{
 	public void getRideInfo(InfoRequest request, StreamObserver<InfoResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String startingLocation = "Hello, your ride ID is : " + request.getRideID() + ". StartingLocation is : Mayor Square-NCI. ";
-		String destination = "Destination is : Heuston.";
+		String startingLocation = "Hello, your ride ID is " + request.getRideID() + ". StartingLocation is Mayor Square-NCI. ";
+		String destination = "Destination is Heuston.";
 				
 		//preparing the response message
 		InfoResponse reply = InfoResponse.newBuilder().setStartingLocation(startingLocation).setDestination(destination).build();

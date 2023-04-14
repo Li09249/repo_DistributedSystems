@@ -19,11 +19,12 @@ public class Service1 extends FleetManagementImplBase{
 	public static void main(String[] args){
 		Service1 service1 = new Service1();
 		
-		Properties prop = service1.getProperties();
+		//Properties prop = service1.getProperties();
 		
-		service1.registerService(prop);
+		//service1.registerService(prop);
 		
-		int port = Integer.valueOf( prop.getProperty("50051") );
+		//int port = Integer.valueOf( prop.getProperty("50051") );
+		int port = 50051;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -45,7 +46,7 @@ public class Service1 extends FleetManagementImplBase{
 
 	}
 	
-	private Properties getProperties() {
+	/*private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service1.properties")){
@@ -96,13 +97,13 @@ public class Service1 extends FleetManagementImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	@Override
 	public void addVehicle(AddRequest request, StreamObserver<AddResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity();
+		String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity() + " seats.";
 		
 		//preparing the response message
 		AddResponse reply = AddResponse.newBuilder().setVehicleID(vehicleID).build();

@@ -18,6 +18,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 /**
  * <pre>
  * Interface exported by the server.
+ * Service Definition
  * </pre>
  */
 @javax.annotation.Generated(
@@ -152,6 +153,7 @@ public final class FleetManagementGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static abstract class FleetManagementImplBase implements io.grpc.BindableService {
@@ -207,6 +209,7 @@ public final class FleetManagementGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class FleetManagementStub extends io.grpc.stub.AbstractStub<FleetManagementStub> {
@@ -253,6 +256,7 @@ public final class FleetManagementGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class FleetManagementBlockingStub extends io.grpc.stub.AbstractStub<FleetManagementBlockingStub> {
@@ -297,6 +301,7 @@ public final class FleetManagementGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class FleetManagementFutureStub extends io.grpc.stub.AbstractStub<FleetManagementFutureStub> {

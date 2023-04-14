@@ -18,6 +18,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 /**
  * <pre>
  * Interface exported by the server.
+ * Service Definition
  * </pre>
  */
 @javax.annotation.Generated(
@@ -152,6 +153,7 @@ public final class CustomerServiceGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static abstract class CustomerServiceImplBase implements io.grpc.BindableService {
@@ -207,6 +209,7 @@ public final class CustomerServiceGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class CustomerServiceStub extends io.grpc.stub.AbstractStub<CustomerServiceStub> {
@@ -253,6 +256,7 @@ public final class CustomerServiceGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class CustomerServiceBlockingStub extends io.grpc.stub.AbstractStub<CustomerServiceBlockingStub> {
@@ -290,6 +294,7 @@ public final class CustomerServiceGrpc {
   /**
    * <pre>
    * Interface exported by the server.
+   * Service Definition
    * </pre>
    */
   public static final class CustomerServiceFutureStub extends io.grpc.stub.AbstractStub<CustomerServiceFutureStub> {
