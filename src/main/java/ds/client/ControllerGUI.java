@@ -69,22 +69,12 @@ public class ControllerGUI implements ActionListener {
 	private JTextField entry9_1,entry9_2,entry9_3;
 	private JTextArea reply9;
 	
-	
-	private static FleetManagementStub asyncStub1;
-	private static FleetManagementBlockingStub blockingStub1;
-
-	private static CustomerServiceStub asyncStub2;
-	private static CustomerServiceBlockingStub blockingStub2;
-
-	private static PaymentSystemStub asyncStub3;
-	private static PaymentSystemBlockingStub blockingStub3;
-	private static PaymentSystemStub asyncStub4;
-	private static PaymentSystemBlockingStub blockingStub4;
-	
-	private ServiceInfo service1Info;
-	private ServiceInfo service2Info;
-	private ServiceInfo service3Info;
-	
+	private FleetManagementBlockingStub blockingStub1;
+	private FleetManagementStub asyncStub1;
+	private CustomerServiceBlockingStub blockingStub2;
+	private CustomerServiceStub asyncStub2;
+	private PaymentSystemBlockingStub blockingStub3;
+	private PaymentSystemStub asyncStub3;
 	
 	private JPanel getService1Method1JPanel() {
 
@@ -403,7 +393,7 @@ public class ControllerGUI implements ActionListener {
 
 		gui.build();
 	}
-	/*public ControllerGUI() {
+	public ControllerGUI() {
 		
 		String service1_type = "_service1._tcp.local.";
 		String service2_type = "_service2._tcp.local.";
@@ -421,26 +411,29 @@ public class ControllerGUI implements ActionListener {
 			
 			//add a service listener for service 1
 			jmdns.addServiceListener(service_type, new ServiceListener() {
-				
+
 				@Override
 	            public void serviceResolved(ServiceEvent event) {
 	                                
-	                // Get the service info and connect to the service
+					
+					// Get the service info and connect to the service
 	                if (service_type.equals("_service1._tcp.local.")) {
 	                	System.out.println("Service 1 resolved: " + event.getInfo());
 	                	ServiceInfo service1Info = event.getInfo();
-	                	String host = service1Info.getHostAddress()[0];
+	                	InetAddress[] addresses = service1Info.getInetAddresses();
+	                	String host = addresses[0].getHostAddress();
 	                	int port = service1Info.getPort();
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
 	                			                 .build();
-	                    blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
+	                	blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
 	                    asyncStub1 = FleetManagementGrpc.newStub(channel);
 	                    
 	                }else if(service_type.equals("_service2._tcp.local.")){
 	                	System.out.println("Service 2 resolved: " + event.getInfo());
 	                	ServiceInfo service2Info = event.getInfo();
-	                	String host = service2Info.getHostAddress()[0];
+	                	InetAddress[] addresses =service2Info.getInetAddresses();
+	                	String host = addresses[0].getHostAddress();
 	                	int port = service2Info.getPort();
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
@@ -450,7 +443,8 @@ public class ControllerGUI implements ActionListener {
 	                }else if(service_type.equals("_service3._tcp.local.")) {
 	                	System.out.println("Service 3 resolved: " + event.getInfo());
 	                	ServiceInfo service3Info = event.getInfo();
-	                	String host = service3Info.getHostAddress()[0];
+	                	InetAddress[] addresses = service3Info.getInetAddresses();
+	                	String host = addresses[0].getHostAddress();
 	                	int port = service3Info.getPort();
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
@@ -473,7 +467,7 @@ public class ControllerGUI implements ActionListener {
 			});
 			
 			// Wait a bit
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 			jmdns.close();
 		} catch (UnknownHostException e) {
 			System.out.println(e.getMessage());
@@ -483,7 +477,7 @@ public class ControllerGUI implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 	
 	private void build() { 
@@ -591,7 +585,7 @@ public class ControllerGUI implements ActionListener {
             }else if (label.equals("getVehicleStatus")) {   
             	System.out.println("service 1 method 3 to be invoked ...");
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
-    			FleetManagementGrpc.FleetManagementStub asyncStub1 = FleetManagementGrpc.newStub(channel);
+    			FleetManagementGrpc.FleetManagementStub asyncStub = FleetManagementGrpc.newStub(channel);
     			//getVehicleStatus method             1 VS 2
     			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry3.getText()).build();
     			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
@@ -611,7 +605,7 @@ public class ControllerGUI implements ActionListener {
     				}
     			};
     			
-    			asyncStub1.getVehicleStatus(request, responseObserver);
+    			asyncStub.getVehicleStatus(request, responseObserver);
     			
     			try {
     				Thread.sleep(1000);
@@ -679,7 +673,7 @@ public class ControllerGUI implements ActionListener {
 			}else if (label.equals("getRideInfo")){	
 				System.out.println("service 2 method 3 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
-				CustomerServiceGrpc.CustomerServiceStub asyncStub2 = CustomerServiceGrpc.newStub(channel);
+				CustomerServiceGrpc.CustomerServiceStub asyncStub = CustomerServiceGrpc.newStub(channel);
 				//getRideInfo method             1 VS 2
 				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry6.getText()).build();
 				StreamObserver<InfoResponse> responseObserver = new StreamObserver<InfoResponse>(){
@@ -699,7 +693,7 @@ public class ControllerGUI implements ActionListener {
 					}
 				};
 				
-				asyncStub2.getRideInfo(request, responseObserver);
+				asyncStub.getRideInfo(request, responseObserver);
 				
 				try {
 					Thread.sleep(1000);
@@ -713,7 +707,7 @@ public class ControllerGUI implements ActionListener {
 			System.out.println("Service 3 to be invoked ...");*/
 			
 			}else if (label.equals("processPayment")) {
-				System.out.println("service 3 method 1to be invoked ...");
+				System.out.println("service 3 method 1 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
 				PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
 				try {
@@ -743,7 +737,7 @@ public class ControllerGUI implements ActionListener {
 			}else if (label.equals("generateInvoice")) {
 				System.out.println("service 3 method 2 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
-				PaymentSystemGrpc.PaymentSystemStub asyncStub3 = PaymentSystemGrpc.newStub(channel);
+				PaymentSystemGrpc.PaymentSystemStub asyncStub = PaymentSystemGrpc.newStub(channel);
 				//generateInvoice method           2 VS 2
 
 				StreamObserver<InvoiceResponse> responseObserver = new StreamObserver<InvoiceResponse>(){
@@ -762,11 +756,11 @@ public class ControllerGUI implements ActionListener {
 						System.out.println("Stream is completed.");
 					}
 				};
-				StreamObserver<InvoiceRequest> requestObserver = asyncStub3.generateInvoice(responseObserver);
-				double amount2 = Double.parseDouble(entry8_2.getText());
+				StreamObserver<InvoiceRequest> requestObserver = asyncStub.generateInvoice(responseObserver);
+				double amount = Double.parseDouble(entry8_2.getText());
 				ds.service3.InvoiceRequest request = ds.service3.InvoiceRequest.newBuilder()
 						                              .setCustomerName(entry8_1.getText())
-						                              .setAmount(amount2)
+						                              .setAmount(amount)
 						                              .build(); 
 				try {
 
@@ -785,7 +779,7 @@ public class ControllerGUI implements ActionListener {
 			}else if (label.equals("handleRefunds")) {
 				System.out.println("service 3 method 3 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
-				PaymentSystemGrpc.PaymentSystemStub asyncStub4 = PaymentSystemGrpc.newStub(channel);
+				PaymentSystemGrpc.PaymentSystemStub asyncStub = PaymentSystemGrpc.newStub(channel);
 				//handleRefunds method              3 VS 2
 				StreamObserver<RefundsResponse> responseObserver = new StreamObserver<RefundsResponse>(){
 					@Override
@@ -804,12 +798,12 @@ public class ControllerGUI implements ActionListener {
 					}
 				};
 				
-				StreamObserver<RefundsRequest> requestObserver = asyncStub4.handleRefunds(responseObserver); 
-				double amount1 = Double.parseDouble(entry9_3.getText());
+				StreamObserver<RefundsRequest> requestObserver = asyncStub.handleRefunds(responseObserver); 
+				double amount = Double.parseDouble(entry9_3.getText());
 				ds.service3.RefundsRequest request = ds.service3.RefundsRequest.newBuilder()
 						                              .setCustomerName(entry9_1.getText())
 						                              .setRideID(entry9_2.getText())
-						                              .setAmount(amount1)
+						                              .setAmount(amount)
 						                              .build(); 
 				try {
 

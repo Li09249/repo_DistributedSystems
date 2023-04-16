@@ -20,12 +20,12 @@ public class Service2 extends CustomerServiceImplBase{
 	public static void main(String[] args){
 		Service2 service2 = new Service2();
 		
-		//Properties prop = service2.getProperties();
+		Properties prop = service2.getProperties();
 		
-		//service2.registerService(prop);
+		service2.registerService(prop);
 		
-		//int port = Integer.valueOf( prop.getProperty("50052") );
-		int port = 50052;
+		int port = Integer.valueOf( prop.getProperty("service_port") );
+		//int port = 50052;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -47,7 +47,7 @@ public class Service2 extends CustomerServiceImplBase{
 
 	}
 	
-	/*private Properties getProperties() {
+	private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service2.properties")){
@@ -76,12 +76,12 @@ public class Service2 extends CustomerServiceImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_service2._tcp.local.");
-			String service_name = prop.getProperty("customerService");
+			String service_type = prop.getProperty("service_type");
+			String service_name = prop.getProperty("service_name");
 			
-			int service_port = Integer.valueOf( prop.getProperty("50052"));
+			int service_port = Integer.valueOf( prop.getProperty("service_port"));
 			
-			String service_description_properties = prop.getProperty("path=index2.html");
+			String service_description_properties = prop.getProperty("service_description");
 			
 			//Register a service
 			ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
@@ -98,7 +98,7 @@ public class Service2 extends CustomerServiceImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 	@Override
 	public StreamObserver<BookRequest> bookRide(StreamObserver<BookResponse> responseObserver) {
@@ -125,7 +125,7 @@ public class Service2 extends CustomerServiceImplBase{
 			
 			public void onCompleted() {
 				
-				System.out.println("receiving bookride completed.");
+				System.out.println("Receiving bookride completed.");
 				
 				//completed too
 				responseObserver.onCompleted();

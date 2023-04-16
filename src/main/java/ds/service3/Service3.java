@@ -20,12 +20,12 @@ public class Service3 extends PaymentSystemImplBase{
 	public static void main(String[] args){
 		Service3 service3 = new Service3();
 		
-		//Properties prop = service3.getProperties();
+		Properties prop = service3.getProperties();
 		
-		//service3.registerService(prop);
+		service3.registerService(prop);
 		
-		//int port = Integer.valueOf( prop.getProperty("50053") );
-		int port = 50053;
+		int port = Integer.valueOf( prop.getProperty("service_port") );
+		//int port = 50053;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -47,7 +47,7 @@ public class Service3 extends PaymentSystemImplBase{
 
 	}
 	
-	/*private Properties getProperties() {
+	private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service3.properties")){
@@ -76,12 +76,12 @@ public class Service3 extends PaymentSystemImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_service3._tcp.local.");
-			String service_name = prop.getProperty("paymentSystem");
+			String service_type = prop.getProperty("service_type");
+			String service_name = prop.getProperty("service_name");
 			
-			int service_port = Integer.valueOf( prop.getProperty("50053"));
+			int service_port = Integer.valueOf( prop.getProperty("service_port"));
 			
-			String service_description_properties = prop.getProperty("path=index3.html");
+			String service_description_properties = prop.getProperty("service_description");
 			
 			//Register a service
 			ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
@@ -98,7 +98,7 @@ public class Service3 extends PaymentSystemImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	@Override
 	public void processPayment(PaymentRequest request, StreamObserver<PaymentResponse> responseObserver) {
@@ -158,7 +158,7 @@ public class Service3 extends PaymentSystemImplBase{
 			public void onNext(RefundsRequest request) {
 				
 				//prepare the value be set back			
-				String confirmMessage = "Hello, " + request.getCustomerName() + ". Your ride ID is x666. Amount is " + request.getAmount() + " euro, has been refunded successfully.";
+				String confirmMessage = "Hello, " + request.getCustomerName() + ". Your ride ID is " + request.getRideID() + " Amount is " + request.getAmount() + " euro, has been refunded successfully.";
 				String refundID = "Refund ID is x888.";
 				
 				//preparing the response message

@@ -19,12 +19,12 @@ public class Service1 extends FleetManagementImplBase{
 	public static void main(String[] args){
 		Service1 service1 = new Service1();
 		
-		//Properties prop = service1.getProperties();
+		Properties prop = service1.getProperties();
 		
-		//service1.registerService(prop);
+		service1.registerService(prop);
 		
-		//int port = Integer.valueOf( prop.getProperty("50051") );
-		int port = 50051;
+		int port = Integer.valueOf( prop.getProperty("service_port") );
+		//int port = 50051;
 			
 		try {
 			Server server = ServerBuilder.forPort(port)				
@@ -46,7 +46,7 @@ public class Service1 extends FleetManagementImplBase{
 
 	}
 	
-	/*private Properties getProperties() {
+	private Properties getProperties() {
 		Properties prop = null;
 		
 		try(InputStream input = new FileInputStream("src/main/resources/service1.properties")){
@@ -75,12 +75,12 @@ public class Service1 extends FleetManagementImplBase{
 			//create a JmDNS instance
 			JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 			
-			String service_type = prop.getProperty("_service1._tcp.local.");
-			String service_name = prop.getProperty("fleetManagement");
+			String service_type = prop.getProperty("service_type");
+			String service_name = prop.getProperty("service_name");
 			
-			int service_port = Integer.valueOf( prop.getProperty("50051"));
+			int service_port = Integer.valueOf( prop.getProperty("service_port"));
 			
-			String service_description_properties = prop.getProperty("path=index1.html");
+			String service_description_properties = prop.getProperty("service_description");
 			
 			//Register a service
 			ServiceInfo serviceInfo = ServiceInfo.create(service_type, service_name, service_port, service_description_properties);
@@ -89,7 +89,7 @@ public class Service1 extends FleetManagementImplBase{
 			System.out.printf("registrering service with type %s and name %s \n", service_type, service_name);
 			
 			//wait a bit
-			Thread.sleep(1000);
+			Thread.sleep(500);			
 			
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
@@ -97,7 +97,7 @@ public class Service1 extends FleetManagementImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	@Override
 	public void addVehicle(AddRequest request, StreamObserver<AddResponse> responseObserver) {
