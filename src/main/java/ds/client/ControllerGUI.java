@@ -1,7 +1,6 @@
 package ds.client;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,10 +41,14 @@ import ds.service3.PaymentSystemGrpc.PaymentSystemBlockingStub;
 import ds.service3.PaymentSystemGrpc.PaymentSystemStub;
 import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
+import io.grpc.Context;
+import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
@@ -69,12 +72,7 @@ public class ControllerGUI implements ActionListener {
 	private JTextField entry9_1,entry9_2,entry9_3;
 	private JTextArea reply9;
 	
-	private FleetManagementBlockingStub blockingStub1;
-	private FleetManagementStub asyncStub1;
-	private CustomerServiceBlockingStub blockingStub2;
-	private CustomerServiceStub asyncStub2;
-	private PaymentSystemBlockingStub blockingStub3;
-	private PaymentSystemStub asyncStub3;
+	
 	
 	private JPanel getService1Method1JPanel() {
 
@@ -426,8 +424,12 @@ public class ControllerGUI implements ActionListener {
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
 	                			                 .build();
-	                	blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
-	                    asyncStub1 = FleetManagementGrpc.newStub(channel);
+	                	try {
+							FleetManagementBlockingStub blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
+							FleetManagementStub asyncStub1 = FleetManagementGrpc.newStub(channel);
+						} finally {
+							channel.shutdown();
+						}
 	                    
 	                }else if(service_type.equals("_service2._tcp.local.")){
 	                	System.out.println("Service 2 resolved: " + event.getInfo());
@@ -438,8 +440,12 @@ public class ControllerGUI implements ActionListener {
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
 	                			                 .build();
-	                    blockingStub2 = CustomerServiceGrpc.newBlockingStub(channel);
-	                    asyncStub2 = CustomerServiceGrpc.newStub(channel);
+	                	try {
+							CustomerServiceBlockingStub blockingStub2 = CustomerServiceGrpc.newBlockingStub(channel);
+							CustomerServiceStub asyncStub2 = CustomerServiceGrpc.newStub(channel);
+						} finally {
+							channel.shutdown();
+						}
 	                }else if(service_type.equals("_service3._tcp.local.")) {
 	                	System.out.println("Service 3 resolved: " + event.getInfo());
 	                	ServiceInfo service3Info = event.getInfo();
@@ -449,8 +455,12 @@ public class ControllerGUI implements ActionListener {
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
 	                			                 .build();
-	                	blockingStub3 = PaymentSystemGrpc.newBlockingStub(channel);
-	                    asyncStub3 = PaymentSystemGrpc.newStub(channel);
+	                	try {
+							PaymentSystemBlockingStub blockingStub3 = PaymentSystemGrpc.newBlockingStub(channel);
+							PaymentSystemStub asyncStub3 = PaymentSystemGrpc.newStub(channel);
+						} finally {
+							channel.shutdown();
+						}
 	                }
 	            }
 				
@@ -527,7 +537,15 @@ public class ControllerGUI implements ActionListener {
             	System.out.println("service 1 method 1 to be invoked ...");
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
     			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
+
+    			//Deadline deadline = Deadline.after(1, TimeUnit.SECONDS);
+    			//Context.CancellableContext cancellableContext = Context.current().withDeadline(deadline, null);
+    			
+    			//Metadata headers = new Metadata();
+    			//headers.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     			try {
+    				//blockingStub = blockingStub.withDeadline(cancellableContext.getDeadline());
+    				//blockingStub = MetadataUtils.attachHeaders(blockingStub, headers);
     				//addVehicle method          1 VS 1
         			//preparing message to send
 					ds.service1.AddRequest request = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1.getText()).build();
@@ -547,6 +565,9 @@ public class ControllerGUI implements ActionListener {
 					}
 				}finally {
 					try {
+						/*if(!cancellableContext.isCancelled()) {
+							cancellableContext.cancel(new Exception("Client cancelled the request"));
+						}*/
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 					}catch(InterruptedException e1) {
 						e1.printStackTrace();
@@ -612,7 +633,15 @@ public class ControllerGUI implements ActionListener {
     			} catch (InterruptedException e1) {
     				// TODO Auto-generated catch block
     				e1.printStackTrace();
+    			} finally {
+    				try {
+    					channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+    				} catch (InterruptedException el) {
+    					el.printStackTrace();
+    				}
     			}
+    			
+    			
             //}
 			
 		/*}else if (label.equals("Invoke Service 2")) {
@@ -642,6 +671,19 @@ public class ControllerGUI implements ActionListener {
 				
 				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry4_1.getText()).setDestination(entry4_2.getText()).build());
 				requestObserver.onCompleted();
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
 				
 			}else if (label.equals("cancelRide")) {
 				System.out.println("service 2 method 2 to be invoked ...");
@@ -700,6 +742,12 @@ public class ControllerGUI implements ActionListener {
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				} finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				}
 			//}
 						
@@ -774,6 +822,12 @@ public class ControllerGUI implements ActionListener {
 					e1.printStackTrace();
 				} catch (InterruptedException e1) {			
 					e1.printStackTrace();
+				} finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				}
 				
 			}else if (label.equals("handleRefunds")) {
@@ -817,6 +871,12 @@ public class ControllerGUI implements ActionListener {
 					e1.printStackTrace();
 				} catch (InterruptedException e1) {			
 					e1.printStackTrace();
+				} finally {
+					try {
+						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+					}catch(InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				}
 				
 				
@@ -825,6 +885,5 @@ public class ControllerGUI implements ActionListener {
 		}else{
 			
 		     }
-
 	}
 }

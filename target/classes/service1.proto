@@ -21,6 +21,8 @@ service FleetManagement {
 //Define the messages
 message AddRequest {
   string targetCapacity = 1;
+
+  map<string, string> headers =3;
 }
 
 message AddResponse {

@@ -53,6 +53,19 @@ private static final long serialVersionUID = 0L;
             targetCapacity_ = s;
             break;
           }
+          case 26: {
+            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              headers_ = com.google.protobuf.MapField.newMapField(
+                  HeadersDefaultEntryHolder.defaultEntry);
+              mutable_bitField0_ |= 0x00000002;
+            }
+            com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+            headers__ = input.readMessage(
+                HeadersDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            headers_.getMutableMap().put(
+                headers__.getKey(), headers__.getValue());
+            break;
+          }
           default: {
             if (!parseUnknownFieldProto3(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -77,6 +90,18 @@ private static final long serialVersionUID = 0L;
     return ds.service1.Service1Impl.internal_static_service1_AddRequest_descriptor;
   }
 
+  @SuppressWarnings({"rawtypes"})
+  @java.lang.Override
+  protected com.google.protobuf.MapField internalGetMapField(
+      int number) {
+    switch (number) {
+      case 3:
+        return internalGetHeaders();
+      default:
+        throw new RuntimeException(
+            "Invalid map field number: " + number);
+    }
+  }
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
@@ -85,6 +110,7 @@ private static final long serialVersionUID = 0L;
             ds.service1.AddRequest.class, ds.service1.AddRequest.Builder.class);
   }
 
+  private int bitField0_;
   public static final int TARGETCAPACITY_FIELD_NUMBER = 1;
   private volatile java.lang.Object targetCapacity_;
   /**
@@ -119,6 +145,82 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int HEADERS_FIELD_NUMBER = 3;
+  private static final class HeadersDefaultEntryHolder {
+    static final com.google.protobuf.MapEntry<
+        java.lang.String, java.lang.String> defaultEntry =
+            com.google.protobuf.MapEntry
+            .<java.lang.String, java.lang.String>newDefaultInstance(
+                ds.service1.Service1Impl.internal_static_service1_AddRequest_HeadersEntry_descriptor, 
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "",
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "");
+  }
+  private com.google.protobuf.MapField<
+      java.lang.String, java.lang.String> headers_;
+  private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+  internalGetHeaders() {
+    if (headers_ == null) {
+      return com.google.protobuf.MapField.emptyMapField(
+          HeadersDefaultEntryHolder.defaultEntry);
+    }
+    return headers_;
+  }
+
+  public int getHeadersCount() {
+    return internalGetHeaders().getMap().size();
+  }
+  /**
+   * <code>map&lt;string, string&gt; headers = 3;</code>
+   */
+
+  public boolean containsHeaders(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    return internalGetHeaders().getMap().containsKey(key);
+  }
+  /**
+   * Use {@link #getHeadersMap()} instead.
+   */
+  @java.lang.Deprecated
+  public java.util.Map<java.lang.String, java.lang.String> getHeaders() {
+    return getHeadersMap();
+  }
+  /**
+   * <code>map&lt;string, string&gt; headers = 3;</code>
+   */
+
+  public java.util.Map<java.lang.String, java.lang.String> getHeadersMap() {
+    return internalGetHeaders().getMap();
+  }
+  /**
+   * <code>map&lt;string, string&gt; headers = 3;</code>
+   */
+
+  public java.lang.String getHeadersOrDefault(
+      java.lang.String key,
+      java.lang.String defaultValue) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, java.lang.String> map =
+        internalGetHeaders().getMap();
+    return map.containsKey(key) ? map.get(key) : defaultValue;
+  }
+  /**
+   * <code>map&lt;string, string&gt; headers = 3;</code>
+   */
+
+  public java.lang.String getHeadersOrThrow(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, java.lang.String> map =
+        internalGetHeaders().getMap();
+    if (!map.containsKey(key)) {
+      throw new java.lang.IllegalArgumentException();
+    }
+    return map.get(key);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -136,6 +238,12 @@ private static final long serialVersionUID = 0L;
     if (!getTargetCapacityBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, targetCapacity_);
     }
+    com.google.protobuf.GeneratedMessageV3
+      .serializeStringMapTo(
+        output,
+        internalGetHeaders(),
+        HeadersDefaultEntryHolder.defaultEntry,
+        3);
     unknownFields.writeTo(output);
   }
 
@@ -147,6 +255,16 @@ private static final long serialVersionUID = 0L;
     size = 0;
     if (!getTargetCapacityBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, targetCapacity_);
+    }
+    for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+         : internalGetHeaders().getMap().entrySet()) {
+      com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+      headers__ = HeadersDefaultEntryHolder.defaultEntry.newBuilderForType()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue())
+          .build();
+      size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, headers__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -166,6 +284,8 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && getTargetCapacity()
         .equals(other.getTargetCapacity());
+    result = result && internalGetHeaders().equals(
+        other.internalGetHeaders());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -179,6 +299,10 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TARGETCAPACITY_FIELD_NUMBER;
     hash = (53 * hash) + getTargetCapacity().hashCode();
+    if (!internalGetHeaders().getMap().isEmpty()) {
+      hash = (37 * hash) + HEADERS_FIELD_NUMBER;
+      hash = (53 * hash) + internalGetHeaders().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -290,6 +414,28 @@ private static final long serialVersionUID = 0L;
       return ds.service1.Service1Impl.internal_static_service1_AddRequest_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 3:
+          return internalGetHeaders();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMutableMapField(
+        int number) {
+      switch (number) {
+        case 3:
+          return internalGetMutableHeaders();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -318,6 +464,7 @@ private static final long serialVersionUID = 0L;
       super.clear();
       targetCapacity_ = "";
 
+      internalGetMutableHeaders().clear();
       return this;
     }
 
@@ -344,7 +491,12 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public ds.service1.AddRequest buildPartial() {
       ds.service1.AddRequest result = new ds.service1.AddRequest(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.targetCapacity_ = targetCapacity_;
+      result.headers_ = internalGetHeaders();
+      result.headers_.makeImmutable();
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -397,6 +549,8 @@ private static final long serialVersionUID = 0L;
         targetCapacity_ = other.targetCapacity_;
         onChanged();
       }
+      internalGetMutableHeaders().mergeFrom(
+          other.internalGetHeaders());
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -425,6 +579,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private java.lang.Object targetCapacity_ = "";
     /**
@@ -492,6 +647,129 @@ private static final long serialVersionUID = 0L;
       
       targetCapacity_ = value;
       onChanged();
+      return this;
+    }
+
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> headers_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetHeaders() {
+      if (headers_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            HeadersDefaultEntryHolder.defaultEntry);
+      }
+      return headers_;
+    }
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetMutableHeaders() {
+      onChanged();;
+      if (headers_ == null) {
+        headers_ = com.google.protobuf.MapField.newMapField(
+            HeadersDefaultEntryHolder.defaultEntry);
+      }
+      if (!headers_.isMutable()) {
+        headers_ = headers_.copy();
+      }
+      return headers_;
+    }
+
+    public int getHeadersCount() {
+      return internalGetHeaders().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public boolean containsHeaders(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetHeaders().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getHeadersMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getHeaders() {
+      return getHeadersMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public java.util.Map<java.lang.String, java.lang.String> getHeadersMap() {
+      return internalGetHeaders().getMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public java.lang.String getHeadersOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetHeaders().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public java.lang.String getHeadersOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetHeaders().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public Builder clearHeaders() {
+      internalGetMutableHeaders().getMutableMap()
+          .clear();
+      return this;
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public Builder removeHeaders(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableHeaders().getMutableMap()
+          .remove(key);
+      return this;
+    }
+    /**
+     * Use alternate mutation accessors instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String>
+    getMutableHeaders() {
+      return internalGetMutableHeaders().getMutableMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+    public Builder putHeaders(
+        java.lang.String key,
+        java.lang.String value) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      if (value == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableHeaders().getMutableMap()
+          .put(key, value);
+      return this;
+    }
+    /**
+     * <code>map&lt;string, string&gt; headers = 3;</code>
+     */
+
+    public Builder putAllHeaders(
+        java.util.Map<java.lang.String, java.lang.String> values) {
+      internalGetMutableHeaders().getMutableMap()
+          .putAll(values);
       return this;
     }
     @java.lang.Override

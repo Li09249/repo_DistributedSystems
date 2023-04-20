@@ -20,6 +20,11 @@ public final class Service1Impl {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service1_AddRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_service1_AddRequest_HeadersEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_service1_AddRequest_HeadersEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service1_AddResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -53,20 +58,22 @@ public final class Service1Impl {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016service1.proto\022\010service1\"$\n\nAddRequest" +
-      "\022\026\n\016targetCapacity\030\001 \001(\t\" \n\013AddResponse\022" +
-      "\021\n\tvehicleID\030\001 \001(\t\"!\n\rRemoveRequest\022\020\n\010c" +
-      "apacity\030\001 \001(\t\"#\n\016RemoveResponse\022\021\n\tvehic" +
-      "leID\030\001 \001(\t\"\"\n\rStatusRequest\022\021\n\tvehicleID" +
-      "\030\001 \001(\t\"?\n\016StatusResponse\022\027\n\017currentLocat" +
-      "ion\030\001 \001(\t\022\024\n\014currentSpeed\030\002 \001(\t2\337\001\n\017Flee" +
-      "tManagement\022;\n\naddVehicle\022\024.service1.Add" +
-      "Request\032\025.service1.AddResponse\"\000\022D\n\rremo" +
-      "veVehicle\022\027.service1.RemoveRequest\032\030.ser" +
-      "vice1.RemoveResponse\"\000\022I\n\020getVehicleStat" +
-      "us\022\027.service1.StatusRequest\032\030.service1.S" +
-      "tatusResponse\"\0000\001B\035\n\013ds.service1B\014Servic" +
-      "e1ImplP\001b\006proto3"
+      "\n\016service1.proto\022\010service1\"\210\001\n\nAddReques" +
+      "t\022\026\n\016targetCapacity\030\001 \001(\t\0222\n\007headers\030\003 \003" +
+      "(\0132!.service1.AddRequest.HeadersEntry\032.\n" +
+      "\014HeadersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(" +
+      "\t:\0028\001\" \n\013AddResponse\022\021\n\tvehicleID\030\001 \001(\t\"" +
+      "!\n\rRemoveRequest\022\020\n\010capacity\030\001 \001(\t\"#\n\016Re" +
+      "moveResponse\022\021\n\tvehicleID\030\001 \001(\t\"\"\n\rStatu" +
+      "sRequest\022\021\n\tvehicleID\030\001 \001(\t\"?\n\016StatusRes" +
+      "ponse\022\027\n\017currentLocation\030\001 \001(\t\022\024\n\014curren" +
+      "tSpeed\030\002 \001(\t2\337\001\n\017FleetManagement\022;\n\naddV" +
+      "ehicle\022\024.service1.AddRequest\032\025.service1." +
+      "AddResponse\"\000\022D\n\rremoveVehicle\022\027.service" +
+      "1.RemoveRequest\032\030.service1.RemoveRespons" +
+      "e\"\000\022I\n\020getVehicleStatus\022\027.service1.Statu" +
+      "sRequest\032\030.service1.StatusResponse\"\0000\001B\035" +
+      "\n\013ds.service1B\014Service1ImplP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -85,7 +92,13 @@ public final class Service1Impl {
     internal_static_service1_AddRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service1_AddRequest_descriptor,
-        new java.lang.String[] { "TargetCapacity", });
+        new java.lang.String[] { "TargetCapacity", "Headers", });
+    internal_static_service1_AddRequest_HeadersEntry_descriptor =
+      internal_static_service1_AddRequest_descriptor.getNestedTypes().get(0);
+    internal_static_service1_AddRequest_HeadersEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_service1_AddRequest_HeadersEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_service1_AddResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_service1_AddResponse_fieldAccessorTable = new

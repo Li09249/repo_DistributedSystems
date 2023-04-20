@@ -9,9 +9,14 @@ import java.util.Properties;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
+
 import ds.service1.FleetManagementGrpc.FleetManagementImplBase;
+import io.grpc.Context;
+import io.grpc.Metadata;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.Status;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 public class Service1 extends FleetManagementImplBase{
@@ -102,6 +107,12 @@ public class Service1 extends FleetManagementImplBase{
 	@Override
 	public void addVehicle(AddRequest request, StreamObserver<AddResponse> responseObserver) {
 		
+		//Context current = Context.current();
+				
+		/*if(current.isCancelled()) {
+			System.out.println("Request cancelled by client");
+			responseObserver.onError(Status.CANCELLED.withDescription("Cancelled by client").asRuntimeException());
+		}*/
 		//prepare the value to be set back
 		String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity() + " seats.";
 		
