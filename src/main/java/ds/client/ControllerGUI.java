@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.jmdns.JmDNS;
@@ -41,14 +43,10 @@ import ds.service3.PaymentSystemGrpc.PaymentSystemBlockingStub;
 import ds.service3.PaymentSystemGrpc.PaymentSystemStub;
 import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
-import io.grpc.Context;
-import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
@@ -67,10 +65,11 @@ public class ControllerGUI implements ActionListener {
 	private JTextArea reply6;
 	private JTextField entry7;
 	private JTextArea reply7;
-	private JTextField entry8_1,entry8_2;
+	private JTextField entry8;
 	private JTextArea reply8;
-	private JTextField entry9_1,entry9_2,entry9_3;
+	private JTextField entry9_1,entry9_2;
 	private JTextArea reply9;
+	
 	
 	
 	
@@ -90,7 +89,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("addVehicle");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button1.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -121,7 +119,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("removeVehicle");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -136,7 +133,6 @@ public class ControllerGUI implements ActionListener {
 
         return panel;
     }
-
     private JPanel getService1Method3JPanel(){
         //method 3
     	JPanel panel = new JPanel();
@@ -152,7 +148,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("getVehicleStatus");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -190,7 +185,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("bookRide");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(120, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -222,7 +216,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("cancelRide");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -254,7 +247,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("getRideInfo");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -286,7 +278,6 @@ public class ControllerGUI implements ActionListener {
 
         JButton button = new JButton("processPayment");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -309,22 +300,16 @@ public class ControllerGUI implements ActionListener {
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
 
-        JLabel label1 = new JLabel("Service 3.2: custName");
+        JLabel label1 = new JLabel("Service 3.2: Amount");
         panel.add(label1);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
-        entry8_1 = new JTextField("",10);
-        panel.add(entry8_1);
-        panel.add(Box.createRigidArea(new Dimension(10, 0)));
-        JLabel label2 = new JLabel("Amount");
-        panel.add(label2);
-        panel.add(Box.createRigidArea(new Dimension(10, 0)));
-        entry8_2 = new JTextField("",10);
-        panel.add(entry8_2);
+        
+        entry8 = new JTextField("",10);
+        panel.add(entry8);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
         JButton button = new JButton("generateInvoice");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -359,16 +344,8 @@ public class ControllerGUI implements ActionListener {
         entry9_2 = new JTextField("",10);
         panel.add(entry9_2);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
-        JLabel label3 = new JLabel("Amount");
-        panel.add(label3);
-        panel.add(Box.createRigidArea(new Dimension(10, 0)));
-        entry9_3 = new JTextField("",10);
-        panel.add(entry9_3);
-        panel.add(Box.createRigidArea(new Dimension(10, 0)));
-
         JButton button = new JButton("handleRefunds");
         button.addActionListener(this);
-        //button.setPreferredSize(new Dimension(168, button.getPreferredSize().height));
         panel.add(button);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -412,8 +389,7 @@ public class ControllerGUI implements ActionListener {
 
 				@Override
 	            public void serviceResolved(ServiceEvent event) {
-	                                
-					
+	                                					
 					// Get the service info and connect to the service
 	                if (service_type.equals("_service1._tcp.local.")) {
 	                	System.out.println("Service 1 resolved: " + event.getInfo());
@@ -546,7 +522,8 @@ public class ControllerGUI implements ActionListener {
     			try {
     				//blockingStub = blockingStub.withDeadline(cancellableContext.getDeadline());
     				//blockingStub = MetadataUtils.attachHeaders(blockingStub, headers);
-    				//addVehicle method          1 VS 1
+    				
+    				//addVehicle method          
         			//preparing message to send
 					ds.service1.AddRequest request = ds.service1.AddRequest.newBuilder().setTargetCapacity(entry1.getText()).build();
 
@@ -579,7 +556,7 @@ public class ControllerGUI implements ActionListener {
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
     			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
     			try {
-					//removeVehicle method             1 VS 1
+					//removeVehicle method             
 					//preparing message to send
 					ds.service1.RemoveRequest request = ds.service1.RemoveRequest.newBuilder().setCapacity(entry2.getText()).build();
 					
@@ -607,12 +584,15 @@ public class ControllerGUI implements ActionListener {
             	System.out.println("service 1 method 3 to be invoked ...");
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
     			FleetManagementGrpc.FleetManagementStub asyncStub = FleetManagementGrpc.newStub(channel);
-    			//getVehicleStatus method             1 VS 2
-    			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry3.getText()).build();
+    			
+    			//getVehicleStatus method             
+    			ds.service1.StatusRequest request = ds.service1.StatusRequest.newBuilder().setVehicleID(entry3.getText()).build();  			
+    			List<StatusResponse> statusResponses = new ArrayList<>();
     			StreamObserver<StatusResponse> responseObserver = new StreamObserver<StatusResponse>(){
+    				
     				@Override
     				public void onNext(StatusResponse response) {
-    					reply3.setText(response.getCurrentLocation() + response.getCurrentSpeed());
+    					statusResponses.add(response);
     				}
     				
     				@Override
@@ -622,14 +602,17 @@ public class ControllerGUI implements ActionListener {
     				
     				@Override
     				public void onCompleted() {
-    					System.out.println("Stream is completed.");
+    					for(StatusResponse response: statusResponses) {
+    						reply3.append("VehicleID is : " + request.getVehicleID() + ". CurrentLocation stop is: " + response.getCurrentLocation() + ". CurrentSpeed is: " + response.getCurrentSpeed() + "km/h.\n");
+    					}   					
+    						System.out.println("Stream is completed ... received "); 					
     				}
     			};
     			
     			asyncStub.getVehicleStatus(request, responseObserver);
     			
     			try {
-    				Thread.sleep(1000);
+    				Thread.sleep(3000);
     			} catch (InterruptedException e1) {
     				// TODO Auto-generated catch block
     				e1.printStackTrace();
@@ -641,18 +624,16 @@ public class ControllerGUI implements ActionListener {
     				}
     			}
     			
-    			
-            //}
-			
 		/*}else if (label.equals("Invoke Service 2")) {
 			System.out.println("Service 2 to be invoked ...");*/
 			
             }else if (label.equals("bookRide")) {
             	System.out.println("service 2 method 1 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
-				CustomerServiceGrpc.CustomerServiceStub stub = CustomerServiceGrpc.newStub(channel);
-				//bookRide method                     2 VS 1
-				StreamObserver<BookRequest> requestObserver = stub.bookRide(new StreamObserver<BookResponse>() {
+				CustomerServiceGrpc.CustomerServiceStub asyncStub = CustomerServiceGrpc.newStub(channel);
+				
+				//bookRide method                     
+				StreamObserver<BookResponse> responseObserver = new StreamObserver<BookResponse>(){
 					@Override
 					public void onNext(BookResponse response) {
 						reply4.setText(response.getConfirmMessage());
@@ -664,16 +645,26 @@ public class ControllerGUI implements ActionListener {
 					}
 					
 					@Override
-					public void onCompleted() {
+					public void onCompleted() {						
 						System.out.println("Stream is completed.");
 					}
-				});
+				};
 				
-				requestObserver.onNext(BookRequest.newBuilder().setCurrentLocation(entry4_1.getText()).setDestination(entry4_2.getText()).build());
-				requestObserver.onCompleted();
-				
+				StreamObserver<BookRequest> requestObserver = asyncStub.bookRide(responseObserver);
+								
 				try {
-					Thread.sleep(1000);
+					String[] currentLocations = entry4_1.getText().split(" ");
+					String[] destinations = entry4_2.getText().split(" ");
+					for(int i = 0, j = 0; i < currentLocations.length && j < destinations.length; i++, j++) {
+						BookRequest request = BookRequest.newBuilder()
+								        .setCurrentLocation(currentLocations[i])
+								        .setDestination(destinations[j])
+								        .build();
+						requestObserver.onNext(request);
+					}
+					requestObserver.onCompleted();
+									
+					Thread.sleep(10000);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -685,12 +676,13 @@ public class ControllerGUI implements ActionListener {
 					}
 				}
 				
+				
 			}else if (label.equals("cancelRide")) {
 				System.out.println("service 2 method 2 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
 				CustomerServiceGrpc.CustomerServiceBlockingStub blockingStub = CustomerServiceGrpc.newBlockingStub(channel);
 				try {
-					//cancelRide method               1 VS 1
+					//cancelRide method               
 					ds.service2.CancelRequest request = ds.service2.CancelRequest.newBuilder().setRideID(entry5.getText()).build();
 										
 					ds.service2.CancelResponse response = blockingStub.cancelRide(request);
@@ -716,12 +708,14 @@ public class ControllerGUI implements ActionListener {
 				System.out.println("service 2 method 3 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext().build();
 				CustomerServiceGrpc.CustomerServiceStub asyncStub = CustomerServiceGrpc.newStub(channel);
-				//getRideInfo method             1 VS 2
-				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry6.getText()).build();
+				
+				//getRideInfo method             
+				ds.service2.InfoRequest request = ds.service2.InfoRequest.newBuilder().setRideID(entry6.getText()).build();				
+				List<InfoResponse> infoResponses = new ArrayList<>();
 				StreamObserver<InfoResponse> responseObserver = new StreamObserver<InfoResponse>(){
 					@Override
-					public void onNext(InfoResponse response) {
-						reply6.setText(response.getStartingLocation() + response.getDestination());
+					public void onNext(InfoResponse response) {						
+						infoResponses.add(response);
 					}
 					
 					@Override
@@ -731,6 +725,9 @@ public class ControllerGUI implements ActionListener {
 					
 					@Override
 					public void onCompleted() {
+						for(InfoResponse response: infoResponses) {
+    						reply6.append("RideID is : " + request.getRideID() + ". StartingLocation stop is : " + response.getStartingLocation() + ". Destination stop is : " + response.getDestination() + ".\n");
+    					}
 						System.out.println("Stream is completed.");
 					}
 				};
@@ -749,7 +746,6 @@ public class ControllerGUI implements ActionListener {
 						e1.printStackTrace();
 					}
 				}
-			//}
 						
 		/*}else if (label.equals("Invoke Service 3")) {
 			System.out.println("Service 3 to be invoked ...");*/
@@ -759,7 +755,7 @@ public class ControllerGUI implements ActionListener {
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
 				PaymentSystemGrpc.PaymentSystemBlockingStub blockingStub = PaymentSystemGrpc.newBlockingStub(channel);
 				try {
-					//processPayment method            1 VS 1
+					//processPayment method           
 					double payment = Double.parseDouble(entry7.getText());
 					ds.service3.PaymentRequest request = ds.service3.PaymentRequest.newBuilder().setPayment(payment).build();			
 					
@@ -786,12 +782,13 @@ public class ControllerGUI implements ActionListener {
 				System.out.println("service 3 method 2 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
 				PaymentSystemGrpc.PaymentSystemStub asyncStub = PaymentSystemGrpc.newStub(channel);
-				//generateInvoice method           2 VS 2
-
+				
+				//generateInvoice method           
+				List<InvoiceResponse> invoiceResponses = new ArrayList<>();
 				StreamObserver<InvoiceResponse> responseObserver = new StreamObserver<InvoiceResponse>(){
 					@Override
 					public void onNext(InvoiceResponse response) {
-						reply8.setText(response.getInvoiceID() + response.getConfirmMessage());
+						invoiceResponses.add(response);
 					}
 					
 					@Override
@@ -801,29 +798,34 @@ public class ControllerGUI implements ActionListener {
 					
 					@Override
 					public void onCompleted() {
-						System.out.println("Stream is completed.");
+						for(InvoiceResponse response: invoiceResponses) {
+    						reply8.append(response.getInvoiceID() + ".\n");
+    					}   					
+    						System.out.println("Stream is completed ... received ");					
 					}
 				};
+				
 				StreamObserver<InvoiceRequest> requestObserver = asyncStub.generateInvoice(responseObserver);
-				double amount = Double.parseDouble(entry8_2.getText());
-				ds.service3.InvoiceRequest request = ds.service3.InvoiceRequest.newBuilder()
-						                              .setCustomerName(entry8_1.getText())
-						                              .setAmount(amount)
-						                              .build(); 
+				
 				try {
-
-					requestObserver.onNext(request);
-
-					// Mark the end of requests
+					String[] amountStrings = entry8.getText().split(" ");
+					double[] amounts = new double[amountStrings.length];
+					for(int i = 0; i < amounts.length; i++) {
+						amounts[i] = Double.parseDouble(amountStrings[i]);
+						InvoiceRequest request = InvoiceRequest.newBuilder()
+								        .setAmount(amounts[i])
+								        .build();
+						requestObserver.onNext(request);
+					}
 					requestObserver.onCompleted();
-					Thread.sleep(1000);
-
-				} catch (RuntimeException e1) {
-					e1.printStackTrace();
-				} catch (InterruptedException e1) {			
+									
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} finally {
 					try {
+						Thread.sleep(2000);
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 					}catch(InterruptedException e1) {
 						e1.printStackTrace();
@@ -834,11 +836,13 @@ public class ControllerGUI implements ActionListener {
 				System.out.println("service 3 method 3 to be invoked ...");
 				ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50053).usePlaintext().build();
 				PaymentSystemGrpc.PaymentSystemStub asyncStub = PaymentSystemGrpc.newStub(channel);
-				//handleRefunds method              3 VS 2
+				
+				//handleRefunds method              				
+				List<RefundsResponse> refundsResponses = new ArrayList<>();
 				StreamObserver<RefundsResponse> responseObserver = new StreamObserver<RefundsResponse>(){
 					@Override
 					public void onNext(RefundsResponse response) {
-						reply9.setText(response.getConfirmMessage() + response.getRefundID());
+						refundsResponses.add(response);
 					}
 					
 					@Override
@@ -848,39 +852,41 @@ public class ControllerGUI implements ActionListener {
 					
 					@Override
 					public void onCompleted() {
+						for(RefundsResponse response: refundsResponses) {
+    						reply9.append(response.getRefundID() + ".\n");
+    					}
 						System.out.println("Stream is completed.");
 					}
 				};
 				
 				StreamObserver<RefundsRequest> requestObserver = asyncStub.handleRefunds(responseObserver); 
-				double amount = Double.parseDouble(entry9_3.getText());
-				ds.service3.RefundsRequest request = ds.service3.RefundsRequest.newBuilder()
-						                              .setCustomerName(entry9_1.getText())
-						                              .setRideID(entry9_2.getText())
-						                              .setAmount(amount)
-						                              .build(); 
+				
 				try {
+					String[] rideIDStrings = entry9_2.getText().split(" ");
+					String[] customerNameStrings = entry9_1.getText().split(" ");
+					
+					for(int i = 0, j = 0; i < rideIDStrings.length && j < customerNameStrings.length; i++, j++) {
 
-					requestObserver.onNext(request);
-
-					// Mark the end of requests
+						RefundsRequest request = RefundsRequest.newBuilder()
+								        .setRideID(rideIDStrings[i])
+								        .setCustomerName(customerNameStrings[j])
+								        .build();
+						requestObserver.onNext(request);
+					}
 					requestObserver.onCompleted();
-					Thread.sleep(1000);
-
-				} catch (RuntimeException e1) {
-					e1.printStackTrace();
-				} catch (InterruptedException e1) {			
+									
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} finally {
 					try {
+						Thread.sleep(2000);
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 					}catch(InterruptedException e1) {
 						e1.printStackTrace();
 					}
 				}
-				
-				
-			//}
 		
 		}else{
 			

@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
+
 
 import ds.service3.PaymentSystemGrpc.PaymentSystemImplBase;
 import io.grpc.Server;
@@ -123,17 +125,32 @@ public class Service3 extends PaymentSystemImplBase{
 			public void onNext(InvoiceRequest request) {
 				
 				//prepare the value be set back
-				String invoiceID = "Hello, " + request.getCustomerName() + ". Your Invoice generated successfully!";
-				String confirmMessage = " Amount is " + request.getAmount() + " euro. Invoice ID is x2122.";
 				
+				Random rand = new Random();
+				
+				int random_value = rand.nextInt(31) + 30;
+
+				String invoiceID = "Amount: " + request.getAmount() + ", InvoiceID: " + Integer.toString(random_value);
+								
 				//preparing the response message
-				InvoiceResponse reply = InvoiceResponse.newBuilder().setInvoiceID(invoiceID).setConfirmMessage(confirmMessage).build();
-				
+				InvoiceResponse reply = InvoiceResponse.newBuilder()
+						.setInvoiceID(invoiceID)
+						.build();
+					
 				responseObserver.onNext(reply);
-			}
+					
+				try {
+					//wait for a second
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+								
+		}
 			
 			@Override
-			public void onError(Throwable t) {
+			public void onError(Throwable t) {		
 				
 				t.printStackTrace();
 				
@@ -157,21 +174,34 @@ public class Service3 extends PaymentSystemImplBase{
 			@Override
 			public void onNext(RefundsRequest request) {
 				
-				//prepare the value be set back			
-				String confirmMessage = "Hello, " + request.getCustomerName() + ". Your ride ID is " + request.getRideID() + " Amount is " + request.getAmount() + " euro, has been refunded successfully.";
-				String refundID = "Refund ID is x888.";
+				//prepare the value be set back
 				
+				Random rand = new Random();
+				
+				int random_value = rand.nextInt(31) + 30;
+
+				String message = "CustomerName: " + request.getCustomerName() + ", RideID: " + request.getRideID() + ", RefundID: " + Integer.toString(random_value);
+									
 				//preparing the response message
-				RefundsResponse reply = RefundsResponse.newBuilder().setConfirmMessage(confirmMessage).setRefundID(refundID).build();
-				
+				RefundsResponse reply = RefundsResponse.newBuilder()
+						.setRefundID(message)
+						.build();
+					
 				responseObserver.onNext(reply);
-			}
+					
+				try {
+					//wait for a second
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}								
+		}
 			
 			@Override
 			public void onError(Throwable t) {
 				
-				t.printStackTrace();
-				
+				t.printStackTrace();				
 			}
 			
 			@Override

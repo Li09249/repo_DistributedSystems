@@ -4,10 +4,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
+
 
 import ds.service2.CustomerServiceGrpc.CustomerServiceImplBase;
 import io.grpc.Server;
@@ -44,7 +47,6 @@ public class Service2 extends CustomerServiceImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	private Properties getProperties() {
@@ -105,16 +107,11 @@ public class Service2 extends CustomerServiceImplBase{
 		
 		return new StreamObserver<BookRequest> () {
 			
+			ArrayList<String> bookRequests = new ArrayList();
+			
 			public void onNext(BookRequest request) {
 				
-				//prepare the value to be set back
-				String message = "Book ride successfully. Current location : " + request.getCurrentLocation() 
-				                 + ". Destination : " + request.getDestination() + ". Enjoy your ride.";
-				
-				//preparing the response message
-				BookResponse reply = BookResponse.newBuilder().setConfirmMessage(message).build();
-				
-				responseObserver.onNext(reply);
+				bookRequests.add(request.getCurrentLocation() + request.getDestination());
 			}
 			
 			public void onError(Throwable t) {
@@ -124,10 +121,11 @@ public class Service2 extends CustomerServiceImplBase{
 			}
 			
 			public void onCompleted() {
+								
+				String confirmMessage = "Book ride successfully.";
+				BookResponse response = BookResponse.newBuilder().setConfirmMessage(confirmMessage).build();
 				
-				System.out.println("Receiving bookride completed.");
-				
-				//completed too
+				responseObserver.onNext(response);
 				responseObserver.onCompleted();
 			}
 		};
@@ -151,16 +149,31 @@ public class Service2 extends CustomerServiceImplBase{
 	public void getRideInfo(InfoRequest request, StreamObserver<InfoResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String startingLocation = "Hello, your ride ID is " + request.getRideID() + ". StartingLocation is Mayor Square-NCI. ";
-		String destination = "Destination is Heuston.";
+		Random rand = new Random();
+		for(int i = 0; i < 2; i++) {
+			int random_value1 = rand.nextInt(901) + 1000;
+
+			String startingLocation = Integer.toString(random_value1);
+			
+			int random_value2 = rand.nextInt(1001) + 2000;
+
+			String destination = Integer.toString(random_value2);
+			
+			//preparing the response message
+			InfoResponse reply = InfoResponse.newBuilder().setStartingLocation(startingLocation).setDestination(destination).build();
+			
+			responseObserver.onNext(reply);
+			
+			try {
+				//wait for a second
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 				
-		//preparing the response message
-		InfoResponse reply = InfoResponse.newBuilder().setStartingLocation(startingLocation).setDestination(destination).build();
-		
-		//send the response message to the client
-		responseObserver.onNext(reply);
 		responseObserver.onCompleted();
 	}
 		
-
 }

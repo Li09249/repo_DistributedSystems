@@ -5,18 +5,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
 
 import ds.service1.FleetManagementGrpc.FleetManagementImplBase;
-import io.grpc.Context;
-import io.grpc.Metadata;
+
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.Status;
-import io.grpc.stub.MetadataUtils;
+
+
 import io.grpc.stub.StreamObserver;
 
 public class Service1 extends FleetManagementImplBase{
@@ -141,13 +142,31 @@ public class Service1 extends FleetManagementImplBase{
 	public void getVehicleStatus(StatusRequest request, StreamObserver<StatusResponse> responseObserver) {
 		
 		//prepare the value to be set back
-		String currentLocation = "Hello, vehicle ID is : " + request.getVehicleID() + ". CurrentLocation is : Mayor Square-NCI. ";
-		String currentSpeed = "CurrentSpeed is : 40km/h.";
+		Random rand = new Random();
+		for(int i = 0; i < 2; i++) {
+			int random_value1 = rand.nextInt(31) + 30;
+
+			String currentSpeed = Integer.toString(random_value1);
+			
+			int random_value2 = rand.nextInt(1001) + 2000;
+
+			String currentLocation = Integer.toString(random_value2);
+			
+			//preparing the response message
+			StatusResponse reply = StatusResponse.newBuilder().setCurrentLocation(currentLocation).setCurrentSpeed(currentSpeed).build();
+			
+			responseObserver.onNext(reply);
+			
+			try {
+				//wait for a second
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
-		//preparing the response message
-		StatusResponse reply = StatusResponse.newBuilder().setCurrentLocation(currentLocation).setCurrentSpeed(currentSpeed).build();
 		
-		responseObserver.onNext(reply);
 		responseObserver.onCompleted();
 	}
 	
