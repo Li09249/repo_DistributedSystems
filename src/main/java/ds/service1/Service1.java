@@ -10,14 +10,15 @@ import java.util.Random;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
-
 import ds.service1.FleetManagementGrpc.FleetManagementImplBase;
-
-
+import io.grpc.Context;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-
-
+import io.grpc.Status;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 public class Service1 extends FleetManagementImplBase{
@@ -49,7 +50,6 @@ public class Service1 extends FleetManagementImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	private Properties getProperties() {
@@ -108,20 +108,45 @@ public class Service1 extends FleetManagementImplBase{
 	@Override
 	public void addVehicle(AddRequest request, StreamObserver<AddResponse> responseObserver) {
 		
-		//Context current = Context.current();
+		// Retrieve the current context of the current gRPC call.
+		Context context = Context.current();
+		
+		// Create a gRPC channel to connect to the server.
+	    ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+	            .usePlaintext()
+	            .build();
 				
-		/*if(current.isCancelled()) {
-			System.out.println("Request cancelled by client");
-			responseObserver.onError(Status.CANCELLED.withDescription("Cancelled by client").asRuntimeException());
-		}*/
-		//prepare the value to be set back
-		String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity() + " seats.";
-		
-		//preparing the response message
-		AddResponse reply = AddResponse.newBuilder().setVehicleID(vehicleID).build();
-		
-		responseObserver.onNext(reply);
-		responseObserver.onCompleted();		
+		try {
+			//Checks if the context has been cancelled.
+			if (context.isCancelled()) {
+				System.out.println("Request cancelled by client");
+				responseObserver.onError(Status.CANCELLED.withDescription("Cancelled by client").asRuntimeException());
+				return;
+			}
+			//prepare the value to be set back
+			String vehicleID = "Hello, added vehicle ID is : x212. Capacity is : " + request.getTargetCapacity()
+					+ " seats.";
+			//preparing the response message
+			AddResponse reply = AddResponse.newBuilder().setVehicleID(vehicleID).build();
+			
+			// Convert the blocking stub to AbstractStub.
+			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
+
+			// Set the Authorization header with the value "Bearer <token>"
+			Metadata metadata = new Metadata();
+			metadata.put(
+			        Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
+			        "Bearer <token>"
+			);
+			// attach the metadata to the stub
+			blockingStub = MetadataUtils.attachHeaders(blockingStub, metadata);
+	        			
+			responseObserver.onNext(reply);
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			// TODO: handle exception
+			responseObserver.onError(Status.INTERNAL.withDescription("Internal error").withCause(e).asRuntimeException());
+		}		
 	}
 
 	@Override
@@ -136,7 +161,6 @@ public class Service1 extends FleetManagementImplBase{
 		responseObserver.onNext(reply);
 		responseObserver.onCompleted();
 	}
-
 
 	@Override
 	public void getVehicleStatus(StatusRequest request, StreamObserver<StatusResponse> responseObserver) {
@@ -165,13 +189,8 @@ public class Service1 extends FleetManagementImplBase{
 				e.printStackTrace();
 			}
 		}
-		
-		
+				
 		responseObserver.onCompleted();
 	}
 	
-	
-	
-	
-
 }

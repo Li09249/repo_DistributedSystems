@@ -11,15 +11,13 @@ import java.util.Random;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
-
 import ds.service2.CustomerServiceGrpc.CustomerServiceImplBase;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 public class Service2 extends CustomerServiceImplBase{
-	
-	
+		
 	public static void main(String[] args){
 		Service2 service2 = new Service2();
 		
@@ -107,11 +105,19 @@ public class Service2 extends CustomerServiceImplBase{
 		
 		return new StreamObserver<BookRequest> () {
 			
-			ArrayList<String> bookRequests = new ArrayList();
+			ArrayList<BookRequest> bookRequests = new ArrayList<>();
 			
 			public void onNext(BookRequest request) {
 				
-				bookRequests.add(request.getCurrentLocation() + request.getDestination());
+				bookRequests.add(request);
+								
+				try {
+					//wait for a second
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
 			}
 			
 			public void onError(Throwable t) {
@@ -121,14 +127,21 @@ public class Service2 extends CustomerServiceImplBase{
 			}
 			
 			public void onCompleted() {
-								
-				String confirmMessage = "Book ride successfully.";
-				BookResponse response = BookResponse.newBuilder().setConfirmMessage(confirmMessage).build();
 				
-				responseObserver.onNext(response);
+				StringBuilder sb = new StringBuilder();
+				
+				for(BookRequest request : bookRequests) {
+					sb.append(request.toString()).append(" && ");
+				}
+								
+				String confirmMessage = sb.toString().trim();
+								
+				BookResponse reply = BookResponse.newBuilder().setConfirmMessage(confirmMessage).build();
+				
+				responseObserver.onNext(reply);
 				responseObserver.onCompleted();
-			}
-		};
+			}			
+	      };	      
 	}  
 
 	@Override

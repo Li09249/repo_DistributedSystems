@@ -1,6 +1,7 @@
 package ds.client;
 
 import java.awt.Dimension;
+
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,26 +28,27 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import ds.service1.FleetManagementGrpc;
-import ds.service1.FleetManagementGrpc.FleetManagementBlockingStub;
-import ds.service1.FleetManagementGrpc.FleetManagementStub;
+
 import ds.service1.StatusResponse;
 import ds.service2.BookRequest;
 import ds.service2.BookResponse;
 import ds.service2.CustomerServiceGrpc;
-import ds.service2.CustomerServiceGrpc.CustomerServiceBlockingStub;
-import ds.service2.CustomerServiceGrpc.CustomerServiceStub;
+
 import ds.service2.InfoResponse;
 import ds.service3.InvoiceRequest;
 import ds.service3.InvoiceResponse;
 import ds.service3.PaymentSystemGrpc;
-import ds.service3.PaymentSystemGrpc.PaymentSystemBlockingStub;
-import ds.service3.PaymentSystemGrpc.PaymentSystemStub;
+
 import ds.service3.RefundsRequest;
 import ds.service3.RefundsResponse;
+import io.grpc.Context;
+import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 public class ControllerGUI implements ActionListener {
@@ -69,17 +71,13 @@ public class ControllerGUI implements ActionListener {
 	private JTextArea reply8;
 	private JTextField entry9_1,entry9_2;
 	private JTextArea reply9;
-	
-	
-	
-	
+		
 	private JPanel getService1Method1JPanel() {
 
         //method 1
 		JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label = new JLabel("Service 1.1: tgCapacity");
         panel.add(label);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -109,7 +107,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label = new JLabel("Service 1.2: Capacity");
         panel.add(label);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -133,11 +130,11 @@ public class ControllerGUI implements ActionListener {
 
         return panel;
     }
+    
     private JPanel getService1Method3JPanel(){
         //method 3
     	JPanel panel = new JPanel();
-        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
-        
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);      
 
         JLabel label = new JLabel("Service 1.3: VehicleID");
         panel.add(label);
@@ -169,7 +166,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label1 = new JLabel("Service 2.1: crLocation");
         panel.add(label1);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -206,7 +202,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label = new JLabel("Service 2.2: RideID");
         panel.add(label);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -237,7 +232,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label = new JLabel("Service 2.3: RideID");
         panel.add(label);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -268,7 +262,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label = new JLabel("Service 3.1: Payment");
         panel.add(label);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -299,7 +292,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label1 = new JLabel("Service 3.2: Amount");
         panel.add(label1);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -331,7 +323,6 @@ public class ControllerGUI implements ActionListener {
     	JPanel panel = new JPanel();
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.X_AXIS);
         
-
         JLabel label1 = new JLabel("Service 3.3: custName");
         panel.add(label1);
         panel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -368,6 +359,7 @@ public class ControllerGUI implements ActionListener {
 
 		gui.build();
 	}
+	
 	public ControllerGUI() {
 		
 		String service1_type = "_service1._tcp.local.";
@@ -400,12 +392,13 @@ public class ControllerGUI implements ActionListener {
 	                	ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
 	                			                 .usePlaintext()
 	                			                 .build();
-	                	try {
-							FleetManagementBlockingStub blockingStub1 = FleetManagementGrpc.newBlockingStub(channel);
-							FleetManagementStub asyncStub1 = FleetManagementGrpc.newStub(channel);
-						} finally {
-							channel.shutdown();
-						}
+	                	
+						try {
+							channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						};						
 	                    
 	                }else if(service_type.equals("_service2._tcp.local.")){
 	                	System.out.println("Service 2 resolved: " + event.getInfo());
@@ -417,11 +410,12 @@ public class ControllerGUI implements ActionListener {
 	                			                 .usePlaintext()
 	                			                 .build();
 	                	try {
-							CustomerServiceBlockingStub blockingStub2 = CustomerServiceGrpc.newBlockingStub(channel);
-							CustomerServiceStub asyncStub2 = CustomerServiceGrpc.newStub(channel);
-						} finally {
-							channel.shutdown();
-						}
+							channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						};
+						
 	                }else if(service_type.equals("_service3._tcp.local.")) {
 	                	System.out.println("Service 3 resolved: " + event.getInfo());
 	                	ServiceInfo service3Info = event.getInfo();
@@ -432,11 +426,14 @@ public class ControllerGUI implements ActionListener {
 	                			                 .usePlaintext()
 	                			                 .build();
 	                	try {
-							PaymentSystemBlockingStub blockingStub3 = PaymentSystemGrpc.newBlockingStub(channel);
-							PaymentSystemStub asyncStub3 = PaymentSystemGrpc.newStub(channel);
-						} finally {
-							channel.shutdown();
-						}
+							channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						};
+						
+	                }else {
+	                	
 	                }
 	            }
 				
@@ -448,8 +445,7 @@ public class ControllerGUI implements ActionListener {
 				@Override
 				public void serviceRemoved(ServiceEvent event) {
 					System.out.println("Service removed: " + event.getInfo());					
-				}
-								
+				}								
 			});
 			
 			// Wait a bit
@@ -464,8 +460,7 @@ public class ControllerGUI implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-	
-	
+		
 	private void build() { 
 
 		JFrame frame = new JFrame("Transport System Controller");
@@ -510,18 +505,28 @@ public class ControllerGUI implements ActionListener {
 			System.out.println("Service 1 to be invoked ...");*/
 			
             if (label.equals("addVehicle")) { 
+            	
             	System.out.println("service 1 method 1 to be invoked ...");
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
     			FleetManagementGrpc.FleetManagementBlockingStub blockingStub = FleetManagementGrpc.newBlockingStub(channel);
 
+    			// Set a deadline of 1 second from now
     			//Deadline deadline = Deadline.after(1, TimeUnit.SECONDS);
-    			//Context.CancellableContext cancellableContext = Context.current().withDeadline(deadline, null);
+    			// Creating a new context with the deadline and no cancellation cause
+    			//Context.CancellableContext cancellableContext = Context.current().withDeadline(deadline,null);
     			
-    			//Metadata headers = new Metadata();
-    			//headers.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     			try {
+                    
     				//blockingStub = blockingStub.withDeadline(cancellableContext.getDeadline());
-    				//blockingStub = MetadataUtils.attachHeaders(blockingStub, headers);
+    				
+    				// Set the Authorization header with the value "Bearer <token>"
+                    Metadata metadata = new Metadata();
+                    metadata.put(
+                            Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
+                            "Bearer <token>"
+                    );
+                    // attach the metadata to the stub
+                    blockingStub = MetadataUtils.attachHeaders(blockingStub, metadata);
     				
     				//addVehicle method          
         			//preparing message to send
@@ -542,8 +547,9 @@ public class ControllerGUI implements ActionListener {
 					}
 				}finally {
 					try {
+						// If the request has not been cancelled
 						/*if(!cancellableContext.isCancelled()) {
-							cancellableContext.cancel(new Exception("Client cancelled the request"));
+							cancellableContext.cancel(new Exception("Client cancelled the request."));
 						}*/
 						channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 					}catch(InterruptedException e1) {
@@ -580,6 +586,7 @@ public class ControllerGUI implements ActionListener {
 						e1.printStackTrace();
 					}
 				}
+    			
             }else if (label.equals("getVehicleStatus")) {   
             	System.out.println("service 1 method 3 to be invoked ...");
             	ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext().build();
@@ -649,6 +656,7 @@ public class ControllerGUI implements ActionListener {
 						System.out.println("Stream is completed.");
 					}
 				};
+				
 				
 				StreamObserver<BookRequest> requestObserver = asyncStub.bookRide(responseObserver);
 								

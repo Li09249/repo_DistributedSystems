@@ -46,7 +46,6 @@ public class Service3 extends PaymentSystemImplBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	private Properties getProperties() {
@@ -145,8 +144,7 @@ public class Service3 extends PaymentSystemImplBase{
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-								
+				}								
 		}
 			
 			@Override
@@ -213,5 +211,4 @@ public class Service3 extends PaymentSystemImplBase{
 			}
 		};
 	}	
-
 }
